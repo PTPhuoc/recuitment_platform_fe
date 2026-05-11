@@ -1,26 +1,203 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #e3f8ff;
+  --foreground: #00105e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-light-blue: #e3f8ff;
+  --color-blue-default: #428bff;
+  --color-milk-blue: #a1e3f9;
+  --color-mim-blue: #578fca;
+  --color-dim-blue: #3674b5;
+  --color-dark-blue: #00105e;
+  --color-milk-blue-blur: rgba(161, 227, 249, 0.5);
+  --color-light-blue-blur: rgba(227, 248, 255, 0.5);
+  --color-dim-blue-blur: rgba(54, 116, 181, 0.5);
+  --shadow-default:
+    0px 6px 12px -2px rgba(50, 50, 93, 0.25),
+    0px 3px 7px -3px rgba(0, 0, 0, 0.3);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
+  font-size: 20px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.scroll-box::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-box::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 8px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+  background: #bce4ff;
+  border-radius: 8px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb:hover {
+  background: #374b9e;
+}
+
+.loader {
+  width: 30px;
+  aspect-ratio: 1;
+  --c: no-repeat
+    linear-gradient(
+      #428bff calc(50% - 10px),
+      #0000 0 calc(50% + 10px),
+      #428bff 0
+    );
+  background:
+    var(--c) 0% 100%,
+    var(--c) 50% 100%,
+    var(--c) 100% 100%;
+  background-size: 20% calc(200% + 20px);
+  animation: l4 1s infinite linear;
+}
+
+@keyframes l4 {
+  33% {
+    background-position:
+      0% 50%,
+      50% 100%,
+      100% 100%;
+  }
+  50% {
+    background-position:
+      0% 0%,
+      50% 50%,
+      100% 100%;
+  }
+  66% {
+    background-position:
+      0% 0%,
+      50% 0%,
+      100% 50%;
+  }
+  100% {
+    background-position:
+      0% 0%,
+      50% 0%,
+      100% 0%;
+  }
+}
+
+/* <div class="checkbox-wrapper-2">
+  <input type="checkbox" class="sc-gJwTLC ikxBAC">
+</div> */
+
+.checkbox-wrapper-2 .ikxBAC {
+  appearance: none;
+  background-color: #dfe1e4;
+  border-radius: 72px;
+  border-style: none;
+  flex-shrink: 0;
+  height: 30px;
+  margin: 0;
+  position: relative;
+  width: 50px;
+}
+
+.checkbox-wrapper-2 .ikxBAC::before {
+  bottom: -16px;
+  content: "";
+  left: -16px;
+  position: absolute;
+  right: -16px;
+  top: -16px;
+}
+
+.checkbox-wrapper-2 .ikxBAC,
+.checkbox-wrapper-2 .ikxBAC::after {
+  transition: all 100ms ease-out;
+}
+
+.checkbox-wrapper-2 .ikxBAC::after {
+  background-color: #fff;
+  border-radius: 50%;
+  content: "";
+  height: 24px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  width: 24px;
+}
+
+.checkbox-wrapper-2 input[type="checkbox"] {
+  cursor: default;
+}
+
+.checkbox-wrapper-2 .ikxBAC:hover {
+  background-color: #c9cbcd;
+  transition-duration: 0s;
+}
+
+.checkbox-wrapper-2 .ikxBAC:checked {
+  background-color: #428bff;
+}
+
+.checkbox-wrapper-2 .ikxBAC:checked::after {
+  background-color: #fff;
+  left: 23px;
+}
+
+.checkbox-wrapper-2 :focus:not(.focus-visible) {
+  outline: 0;
+}
+
+.checkbox-wrapper-2 .ikxBAC:checked:hover {
+  background-color: #428bff;
+}
+
+.text-loader-to-right {
+  background: linear-gradient(90deg, #00c9ff 0%, #92fe9d 50%, #00c9ff 100%);
+  color: transparent;
+  background-size: 200% auto;
+  background-clip: text;
+  animation: loaderToRight 2s linear infinite;
+}
+
+@keyframes loaderToRight {
+  100% {
+    background-position: 0% center;
+  }
+  0% {
+    background-position: 200% center;
+  }
+}
+
+.text-loader-to-left {
+  background: linear-gradient(90deg, #1cb5e0 0%, #000851 50%, #1cb5e0 100%);
+  color: transparent;
+  background-size: 200% auto;
+  background-clip: text;
+  animation: loaderToLeft 2s linear infinite;
+}
+
+@keyframes loaderToLeft {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
