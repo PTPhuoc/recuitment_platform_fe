@@ -2,6 +2,7 @@
 
 import InputImage from "@/app/Component/InputImage";
 import InputNumberDefault from "@/app/Component/InputNumberDefault";
+import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import ListSearch from "@/app/Component/ListSearch";
 import { useToast } from "@/app/hook/ToastContext";
@@ -171,6 +172,15 @@ export default function ListCompanyPage() {
               value={companyInfo.size}
               outValue={(value) =>
                 setCompanyInfo({ ...companyInfo, size: value })
+              }
+            />
+            <InputSelectDefault
+              label="Lĩnh vực công ty"
+              listValue={listIndistry}
+              classAll="rounded-lg"
+              classLabel="rounded-md w-40"
+              outValue={(value) =>
+                setCompanyInfo({ ...companyInfo, industry: value })
               }
             />
             
