@@ -8,6 +8,7 @@ type ListSearchValue = {
   lable?: string;
   className?: string;
   classDisable?: string;
+  classLabel?: string;
   placeholder?: string;
   listValue: any[] | null;
   attrSearch: string;
@@ -22,6 +23,7 @@ export default function ListSearch({
   lable,
   className,
   classDisable,
+  classLabel,
   placeholder,
   listValue,
   attrSearch,
@@ -83,7 +85,7 @@ export default function ListSearch({
       }
     >
       <div
-        className={`flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disable ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`}
+        className={cn(`flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disable ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`, classLabel)}
       >
         <List className="w-5 h-5" />
         {lable && <p className="flex-1 text-center">{lable}</p>}

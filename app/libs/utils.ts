@@ -221,7 +221,7 @@ type ReListItem = {
   translations:
     | {
         id: string;
-        language_code: "vie" | "eng";
+        language_code: string;
         name: string;
       }[]
     | []
@@ -230,10 +230,14 @@ type ReListItem = {
 
 export const Relist = <T extends ReListItem>(
   list: T[] | null,
-): { name: string; value: string }[] => {
+): (Omit<T, 'translations'> & { name: string; value: string })[] => {
   if (!list) return [];
-  return list.map((item) => ({
-    name: item.translations?.[0]?.name || "",
-    value: item.id,
-  }));
+  return list.map((item) => {
+    const { translations, ...rest } = item;
+    return {
+      ...rest,
+      name: translations?.[0]?.name || "",
+      value: item.id,
+    };
+  });
 };

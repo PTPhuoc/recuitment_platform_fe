@@ -1,5 +1,6 @@
 "use client";
 
+import InputAddressDefault from "@/app/Component/InputAddressDefault";
 import InputImage from "@/app/Component/InputImage";
 import InputNumberDefault from "@/app/Component/InputNumberDefault";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
@@ -47,9 +48,19 @@ export default function ListCompanyPage() {
     isVerified: true,
   });
   const { data: categories, isLoading, error } = useCategories("vie");
-  const [listIndistry, setListIndustry] = useState<
-    { name: string; value: string }[]
-  >([]);
+  const [category, setCategory] = useState<{
+    industry: { name: string; value: string }[];
+    location: { name: string; value: string, parent_id: string }[];
+    formOfWork: { name: string; value: string }[];
+    jobLevel: { name: string; value: string }[];
+    education: { name: string; value: string }[];
+  }>({
+    industry: [],
+    location: [],
+    formOfWork: [],
+    jobLevel: [],
+    education: [],
+  });
   const { addToast } = useToast();
   const [logo, setLogo] = useState<File | null>(null);
   const [cover, setCover] = useState<File | null>(null);
@@ -77,13 +88,19 @@ export default function ListCompanyPage() {
       });
     }
     if (categories) {
+      console.log(categories);
       addToast({
         type: "success",
         description: "Categories loaded successfully.",
         title: "Success",
       });
-      console.log(Relist(categories.industry));
-      setListIndustry(Relist(categories.industry));
+      setCategory({
+        industry: Relist(categories.industry),
+        location: Relist(categories.location),
+        formOfWork: Relist(categories.formOfWork),
+        jobLevel: Relist(categories.jobLevel),
+        education: Relist(categories.education),
+      });
     }
   }, [isLoading, error, categories]);
 
@@ -176,14 +193,20 @@ export default function ListCompanyPage() {
             />
             <InputSelectDefault
               label="Lĩnh vực công ty"
-              listValue={listIndistry}
+              listSearch={category.industry}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               outValue={(value) =>
                 setCompanyInfo({ ...companyInfo, industry: value })
               }
             />
-            
+            <InputAddressDefault
+              label="Địa chỉ công ty"
+              listSearch={category.location}
+              classAll="rounded-lg"
+              classLabel="rounded-md w-40"
+              outValue={(value) => setCompanyInfo({ ...companyInfo, location: [value] })}
+            />
           </div>
         </div>
       </div>

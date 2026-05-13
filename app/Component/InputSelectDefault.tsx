@@ -11,7 +11,7 @@ type InputSelectDefaultProps = {
   label?: string;
   classDisable?: string;
   disabled?: boolean;
-  listValue: { name: string; value: string }[];
+  listSearch: { name: string; value: string }[];
   placeholder?: string;
   value?: string[];
   outValue: (value: string[]) => void;
@@ -24,7 +24,7 @@ export default function InputSelectDefault({
   classLabel,
   label,
   disabled = false,
-  listValue,
+  listSearch,
   placeholder,
   value,
   outValue,
@@ -33,7 +33,7 @@ export default function InputSelectDefault({
   const [selected, setSelected] = useState<{ name: string; value: string }[]>(
     [],
   );
-  const [listSearch, setListSearch] = useState(listValue);
+  const [listValue, setListValue] = useState(listSearch);
   const [isFocus, setIsFocus] = useState(false);
 
   //Add item and aviod item had existed in list
@@ -59,7 +59,7 @@ export default function InputSelectDefault({
   useEffect(() => {
     if (value && value.length > 0) {
       const reSelected = value.map((item) => {
-        const thisName = listValue.find((i) => i.value === item)?.name || "";
+        const thisName = listSearch.find((i) => i.value === item)?.name || "";
         return {
           name: thisName,
           value: item,
@@ -70,14 +70,14 @@ export default function InputSelectDefault({
   }, [value]);
 
   useEffect(() => {
-    setListSearch(
+    setListValue(
       handleSearch({
-        listSearch: listValue ?? null,
+        listSearch: listSearch ?? null,
         attrSearch: "name",
         value: inputValue,
       }),
     );
-  }, [inputValue, listValue]);
+  }, [inputValue, listSearch]);
 
   return (
     <div
@@ -90,7 +90,7 @@ export default function InputSelectDefault({
         className={
           disabled
             ? cn(
-                "group z-2 w-full left-0 relative flex flex-col p-1 gap-2 bg-zinc-200 rounded-2xl",
+                "z-2 w-full left-0 relative flex flex-col p-1 gap-2 bg-zinc-200 rounded-2xl",
                 classDisable,
                 classAll,
               )
@@ -140,8 +140,8 @@ export default function InputSelectDefault({
             `absolute z-3 w-full top-full left-0 mt-1 flex flex-col bg-zinc-200 rounded-xl border-2 border-blue-default gap-px overflow-auto no-scroll ${isFocus ? "max-h-25 opacity-100" : "max-h-0 opacity-0"} duration-200 ease-in-out group-hover:max-h-25 group-hover:opacity-100`,
           )}
         >
-          {!disabled && listSearch && listSearch.length > 0 ? (
-            listSearch.map((item, index) => (
+          {!disabled && listValue && listValue.length > 0 ? (
+            listValue.map((item, index) => (
               <button
                 key={index}
                 className="py-1 bg-white duration-200 ease-in hover:bg-blue-default hover:text-light-blue cursor-pointer"
