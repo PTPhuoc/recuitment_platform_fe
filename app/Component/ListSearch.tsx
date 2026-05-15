@@ -2,7 +2,7 @@
 
 import { List } from "lucide-react";
 import { cn, handleSearch } from "../libs/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type ListSearchValue = {
   lable?: string;
@@ -13,7 +13,7 @@ type ListSearchValue = {
   listValue: any[] | null;
   attrSearch: string;
   attrGet: string;
-  value?: string;
+  value: string;
   disable?: boolean;
   outValue: (value: string) => void;
 };
@@ -31,34 +31,24 @@ export default function ListSearch({
   disable = false,
   outValue,
 }: ListSearchValue) {
-  const [listSearch, setListSearch] = useState(listValue);
   const [searchValue, setSearchValue] = useState("");
   const [isFocus, setIsFocus] = useState(false);
+  const [listSearch, setListSearch] = useState(listValue);
 
-  const searchWithValue = (value: string) => {
-    if (value && listValue) {
-      const result = listValue.find((item) =>
-        item[attrGet].toLowerCase() === value.toLowerCase(),
-      );
-      if (result) {
-        return result[attrSearch];
-      }
-    }
-    return value;
-  };
-
-  const handleOutValue = (value: string) => {
-    const trimmed = value.trim();
-    setSearchValue(trimmed);
-    outValue(value);
-  };
+  const displayName = useMemo(() => {
+    if (!value) return "";
+    const found = listValue?.find(item => item[attrGet] === value);
+    return found ? found[attrSearch] : "";
+  }, [value, listValue, attrGet, attrSearch]);
 
   useEffect(() => {
-    const time = setTimeout(() => {
-      setSearchValue(searchWithValue(value));
-    }, 200);
-    return () => clearTimeout(time);
-  }, [value]);
+    setSearchValue(displayName);
+  }, [displayName]);
+
+  const handleOutValue = (val: string) => {
+    const trimmed = val.trim();
+    setSearchValue(trimmed);
+  };
 
   useEffect(() => {
     setListSearch(
@@ -66,9 +56,9 @@ export default function ListSearch({
         listSearch: listValue ?? null,
         attrSearch: attrSearch,
         value: searchValue,
-      }),
+      })
     );
-  }, [searchValue, listValue]);
+  }, [searchValue, listValue, attrSearch]);
 
   return (
     <div

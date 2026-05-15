@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn, handleSearch } from "../libs/utils";
 import { PenLine, X } from "lucide-react";
 
@@ -13,7 +13,7 @@ type InputSelectDefaultProps = {
   disabled?: boolean;
   listSearch: { name: string; value: string }[];
   placeholder?: string;
-  value?: string[];
+  value: string[];
   outValue: (value: string[]) => void;
 };
 
@@ -26,48 +26,30 @@ export default function InputSelectDefault({
   disabled = false,
   listSearch,
   placeholder,
-  value,
+  value = [], // mặc định là mảng rỗng
   outValue,
 }: InputSelectDefaultProps) {
   const [inputValue, setInputValue] = useState<string>("");
-  const [selected, setSelected] = useState<{ name: string; value: string }[]>(
-    [],
-  );
   const [listValue, setListValue] = useState(listSearch);
   const [isFocus, setIsFocus] = useState(false);
 
-  //Add item and aviod item had existed in list
+  // Danh sách các item đã chọn (từ value props)
+  const selectedItems = useMemo(() => {
+    return value.map((v) => {
+      const found = listSearch.find((item) => item.value === v);
+      return { name: found?.name || "", value: v };
+    });
+  }, [value, listSearch]);
+
   const handleAddSelected = (item: { name: string; value: string }) => {
-    if (selected && selected.length > 0) {
-      const isExist = selected.some((i) => i.value === item.value);
-      if (!isExist) {
-        setSelected([...selected, item]);
-        outValue([...selected.map((i) => i.value), item.value]);
-      }
-    } else {
-      setSelected([item]);
-      outValue([item.value]);
+    if (!value.includes(item.value)) {
+      outValue([...value, item.value]);
     }
   };
 
   const handleRemoveSelected = (item: { name: string; value: string }) => {
-    const newSelected = selected.filter((i) => i.value !== item.value);
-    setSelected(newSelected);
-    outValue(newSelected.map((i) => i.value));
+    outValue(value.filter((v) => v !== item.value));
   };
-
-  useEffect(() => {
-    if (value && value.length > 0) {
-      const reSelected = value.map((item) => {
-        const thisName = listSearch.find((i) => i.value === item)?.name || "";
-        return {
-          name: thisName,
-          value: item,
-        };
-      });
-      setSelected(reSelected);
-    }
-  }, [value]);
 
   useEffect(() => {
     setListValue(
@@ -75,54 +57,65 @@ export default function InputSelectDefault({
         listSearch: listSearch ?? null,
         attrSearch: "name",
         value: inputValue,
-      }),
+      })
     );
   }, [inputValue, listSearch]);
 
   return (
     <div
-      className={cn(
-        "flex flex-col border-2 border-blue-default rounded-2xl shadow-default",
-        classAll,
-      )}
+      className={
+        disabled
+          ? cn(
+              "flex flex-col bg-zinc-200 border-2 border-zinc-300 rounded-2xl shadow-default",
+              classDisable,
+              classAll,
+            )
+          : cn(
+              "flex flex-col bg-white border-2 border-blue-default rounded-2xl shadow-default",
+              className,
+              classAll,
+            )
+      }
     >
       <div
         className={
           disabled
             ? cn(
-                "z-2 w-full left-0 relative flex flex-col p-1 gap-2 bg-zinc-200 rounded-2xl",
+                "z-2 w-full left-0 relative flex flex-col p-1 gap-2 bg-zinc-200",
                 classDisable,
                 classAll,
               )
             : cn(
-                "group z-2 w-full left-0 relative flex flex-col p-1 gap-2 bg-white rounded-2xl",
+                "group z-2 w-full left-0 relative flex flex-col p-1 gap-2 bg-white",
                 className,
                 classAll,
               )
         }
       >
-        <div className="flex-1 flex gap-1 flex-wrap">
-          <div
-            className={cn(
-              "flex w-30 items-center gap-2 px-2 rounded-xl bg-light-blue text-blue-default font-bold shrink-0",
-              classLabel,
-              classAll,
-            )}
-          >
-            <PenLine className="w-5 h-5 max-lg:hidden" />
-            {label && <p className="flex-1 text-center">{label}</p>}
+        <div className="flex gap-2 items-center">
+          <div className="flex-1 flex gap-1 flex-wrap">
+            <div
+              className={cn(
+                "flex w-30 items-center gap-2 px-2 rounded-xl bg-light-blue text-blue-default font-bold shrink-0",
+                classLabel,
+                classAll,
+              )}
+            >
+              <PenLine className="w-5 h-5 max-lg:hidden" />
+              {label && <p className="flex-1 text-center">{label}</p>}
+            </div>
+            <input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onClick={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              name={label}
+              type="text"
+              disabled={disabled}
+              className="px-1 flex-1 outline-none min-w-50"
+              placeholder={placeholder}
+            />
           </div>
-          <input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onClick={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            name={label}
-            type="text"
-            disabled={disabled}
-            className="px-1 flex-1 outline-none min-w-50"
-            placeholder={placeholder}
-          />
           <div className="flex h-full items-end">
             <button
               className={cn(
@@ -163,12 +156,12 @@ export default function InputSelectDefault({
           )}
         </div>
       </div>
-      {selected && selected.length > 0 && (
+      {selectedItems && selectedItems.length > 0 && (
         <span className="w-full h-px bg-blue-default"></span>
       )}
-      {selected && selected.length > 0 && (
+      {selectedItems && selectedItems.length > 0 && (
         <div className={cn(`flex flex-wrap gap-1 bg-white p-1`, classAll)}>
-          {selected.map((item) => (
+          {selectedItems.map((item) => (
             <div
               key={item.value}
               className={cn(

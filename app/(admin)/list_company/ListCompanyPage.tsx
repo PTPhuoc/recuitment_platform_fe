@@ -3,6 +3,7 @@
 import InputAddressDefault from "@/app/Component/InputAddressDefault";
 import InputImage from "@/app/Component/InputImage";
 import InputNumberDefault from "@/app/Component/InputNumberDefault";
+import InputSelectAddress from "@/app/Component/InputSelectAddress";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import ListSearch from "@/app/Component/ListSearch";
@@ -88,7 +89,6 @@ export default function ListCompanyPage() {
       });
     }
     if (categories) {
-      console.log(categories);
       addToast({
         type: "success",
         description: "Categories loaded successfully.",
@@ -194,18 +194,20 @@ export default function ListCompanyPage() {
             <InputSelectDefault
               label="Lĩnh vực công ty"
               listSearch={category.industry}
+              value={companyInfo.industry}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               outValue={(value) =>
                 setCompanyInfo({ ...companyInfo, industry: value })
               }
             />
-            <InputAddressDefault
+            <InputSelectAddress
               label="Địa chỉ công ty"
+              value={companyInfo.location}
               listSearch={category.location}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
-              outValue={(value) => setCompanyInfo({ ...companyInfo, location: [value] })}
+              outValue={(value) => setCompanyInfo({ ...companyInfo, location: value })}
             />
           </div>
         </div>

@@ -12,13 +12,13 @@ type InputAddressProps = {
   disabled?: boolean;
   placeholder?: string;
   listSearch: { name: string; value: string; parent_id: string }[];
-  value?: string;
+  value: string[];
   label?: string;
-  outValue: (value: string) => void;
+  outValue: (value: string[]) => void;
 };
 
-// app/Component/InputAddressDefault.tsx
-export default function InputAddressDefault({
+// app/Component/InputSelectAddress.tsx
+export default function InputSelectAddress({
   className,
   classAll,
   classDisable,
@@ -26,20 +26,18 @@ export default function InputAddressDefault({
   disabled = false,
   placeholder,
   listSearch,
-  value,
+  value = [],
   label,
   outValue,
 }: InputAddressProps) {
   const [inputValue, setInputValue] = useState<string>("");
-  const [listSuggest, setListSuggest] = useState<
-    { name: string; subName: string; value: string }[]
-  >([]);
+  const [listSuggest, setListSuggest] = useState<{ name: string; subName: string; value: string }[]>([]);
   const [isFocus, setIsFocus] = useState(false);
 
   const parentMap = useMemo(() => {
     const map = new Map<string, { name: string; parent_id: string }>();
     listSearch.forEach((item) =>
-      map.set(item.value, { name: item.name, parent_id: item.parent_id }),
+      map.set(item.value, { name: item.name, parent_id: item.parent_id })
     );
     return map;
   }, [listSearch]);
@@ -55,6 +53,25 @@ export default function InputAddressDefault({
     return list;
   };
 
+  // Tạo danh sách đã chọn từ value props (để hiển thị)
+  const selectedItems = useMemo(() => {
+    return value.map((id) => ({
+      name: parentMap.get(id)?.name || "",
+      subName: findParent(id)?.join(", ") || "",
+      value: id,
+    }));
+  }, [value, parentMap]);
+
+  const handleAddSelected = (id: string) => {
+    if (!value.includes(id)) {
+      outValue([...value, id]);
+    }
+  };
+
+  const handleRemoveSelected = (id: string) => {
+    outValue(value.filter((v) => v !== id));
+  };
+
   useEffect(() => {
     const time = setTimeout(() => {
       if (inputValue) {
@@ -65,37 +82,44 @@ export default function InputAddressDefault({
           value: firstValue,
         });
         if (search.length > 0) {
-          const addSubName = search.map((item) => {
-            return {
-              name: item.name,
-              subName: findParent(item.parent_id)?.join(", ") || "",
-              value: item.value,
-            };
-          });
+          const addSubName = search.map((item) => ({
+            name: item.name,
+            subName: findParent(item.parent_id)?.join(", ") || "",
+            value: item.value,
+          }));
           setListSuggest(addSubName);
+        } else {
+          setListSuggest([]);
         }
-      }else {
+      } else {
         setListSuggest([]);
-        outValue("")
       }
     }, 300);
     return () => clearTimeout(time);
   }, [inputValue, listSearch]);
 
-
-
   return (
-    <div className={cn("flex flex-col gap-1", classAll)}>
+    <div
+      className={
+        disabled
+          ? cn(
+              "flex flex-col bg-zinc-200 border-2 border-zinc-300 rounded-2xl shadow-default",
+              classDisable,
+              classAll,
+            )
+          : cn(
+              "flex flex-col bg-white border-2 border-blue-default rounded-2xl shadow-default",
+              className,
+              classAll,
+            )
+      }
+    >
       <div
         className={
           disabled
-            ? cn(
-                "relative flex p-1 gap-2 items-center bg-zinc-200 border-2 border-zinc-300 rounded-2xl shadow-default",
-                classDisable,
-                classAll,
-              )
+            ? cn("relative flex p-1 gap-2 items-center", classDisable, classAll)
             : cn(
-                "group relative flex p-1 gap-2 items-center bg-white border-2 border-blue-default rounded-2xl shadow-default",
+                "group relative flex p-1 gap-2 items-center",
                 className,
                 classAll,
               )
@@ -132,7 +156,6 @@ export default function InputAddressDefault({
             )}
             onClick={() => {
               setInputValue("");
-              outValue("");
             }}
           >
             <X className="h-5 w-5" />
@@ -150,10 +173,8 @@ export default function InputAddressDefault({
                 className="flex flex-col items-start p-1 bg-white duration-200 ease-in hover:bg-blue-default hover:text-light-blue"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setInputValue(
-                    item.name + (item.subName ? ", " + item.subName : ""),
-                  );
-                  outValue(item.value);
+                  handleAddSelected(item.value);
+                  setInputValue("")
                 }}
               >
                 <p className="font-bold">{item.name}</p>
@@ -167,6 +188,37 @@ export default function InputAddressDefault({
           )}
         </div>
       </div>
+      {selectedItems && selectedItems.length > 0 && (
+        <span className="w-full h-px bg-blue-default"></span>
+      )}
+      {selectedItems && selectedItems.length > 0 && (
+        <div className={cn(`flex flex-col gap-1 bg-white p-1`, classAll)}>
+          {selectedItems.map((item) => (
+            <div
+              key={item.value}
+              className={cn(
+                "flex items-center justify-between px-2 gap-2 bg-dim-blue rounded-2xl",
+                classAll,
+              )}
+            >
+              <p className="text-white">
+                {item.name + (item.subName ? ", " + item.subName : "")}
+              </p>
+              <div className="flex h-full items-center">
+                <button
+                  className={cn(
+                    "text-white duration-200 ease-in hover:bg-white hover:text-dim-blue cursor-pointer",
+                    classAll,
+                  )}
+                  onClick={() => handleRemoveSelected(item.value)}
+                >
+                  <X className="h-5 w-5 " />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
