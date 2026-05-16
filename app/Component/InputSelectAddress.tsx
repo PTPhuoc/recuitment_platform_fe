@@ -31,13 +31,15 @@ export default function InputSelectAddress({
   outValue,
 }: InputAddressProps) {
   const [inputValue, setInputValue] = useState<string>("");
-  const [listSuggest, setListSuggest] = useState<{ name: string; subName: string; value: string }[]>([]);
+  const [listSuggest, setListSuggest] = useState<
+    { name: string; subName: string; value: string }[]
+  >([]);
   const [isFocus, setIsFocus] = useState(false);
 
   const parentMap = useMemo(() => {
     const map = new Map<string, { name: string; parent_id: string }>();
     listSearch.forEach((item) =>
-      map.set(item.value, { name: item.name, parent_id: item.parent_id })
+      map.set(item.value, { name: item.name, parent_id: item.parent_id }),
     );
     return map;
   }, [listSearch]);
@@ -103,7 +105,7 @@ export default function InputSelectAddress({
       className={
         disabled
           ? cn(
-              "flex flex-col bg-zinc-200 border-2 border-zinc-300 rounded-2xl shadow-default",
+              "flex flex-col bg-white border-2 border-zinc-300 rounded-2xl shadow-default",
               classDisable,
               classAll,
             )
@@ -127,11 +129,20 @@ export default function InputSelectAddress({
       >
         <div className="flex-1 flex gap-1 flex-wrap">
           <div
-            className={cn(
-              `flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disabled ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`,
-              classLabel,
-              classAll,
-            )}
+            className={
+              disabled
+                ? cn(
+                    "flex w-30 items-center gap-2 px-2 rounded-xl bg-zinc-300 text-white font-bold shrink-0",
+                    classLabel,
+                    classDisable,
+                    classAll,
+                  )
+                : cn(
+                    "flex w-30 items-center gap-2 px-2 rounded-xl bg-light-blue text-blue-default font-bold shrink-0",
+                    classLabel,
+                    classAll,
+                  )
+            }
           >
             <MapPin className="w-5 h-5 max-lg:hidden" />
             {label && <p className="flex-1 text-center">{label}</p>}
@@ -150,10 +161,19 @@ export default function InputSelectAddress({
         </div>
         <div className="flex h-full items-end">
           <button
-            className={cn(
-              "p-1 bg-blue-default rounded-xl text-light-blue border-2 border-blue-default scale-100 duration-200 ease-in hover:bg-light-blue hover:text-blue-default active:scale-95",
-              classAll,
-            )}
+            className={
+              disabled
+                ? cn(
+                    "p-1 bg-zinc-300 rounded-xl text-white border-2 border-zinc-300 scale-100 duration-200 ease-in",
+                    classDisable,
+                    classAll,
+                  )
+                : cn(
+                    "p-1 bg-blue-default rounded-xl text-light-blue border-2 border-blue-default scale-100 duration-200 ease-in hover:bg-light-blue hover:text-blue-default active:scale-95",
+                    classAll,
+                  )
+            }
+            disabled={disabled}
             onClick={() => {
               setInputValue("");
             }}
@@ -174,7 +194,7 @@ export default function InputSelectAddress({
                 onClick={(e) => {
                   e.stopPropagation();
                   handleAddSelected(item.value);
-                  setInputValue("")
+                  setInputValue("");
                 }}
               >
                 <p className="font-bold">{item.name}</p>

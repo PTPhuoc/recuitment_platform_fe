@@ -1,26 +1,30 @@
 "use client";
 
 import InputAddressDefault from "@/app/Component/InputAddressDefault";
+import InputCheckDefault from "@/app/Component/InputCheckDefault";
 import InputImage from "@/app/Component/InputImage";
 import InputNumberDefault from "@/app/Component/InputNumberDefault";
 import InputSelectAddress from "@/app/Component/InputSelectAddress";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import ListSearch from "@/app/Component/ListSearch";
+import TextAreaDefault from "@/app/Component/TextAreaDefault";
 import { useToast } from "@/app/hook/ToastContext";
 import { useCategories } from "@/app/hook/useCategories";
 import { Relist } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch } from "@/app/store/store";
+import axios, { AxiosResponse } from "axios";
 import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 type CompanyInfo = {
+  id: string;
   name: string;
   tradingName: string;
   logo: string;
-  cover: string;
+  coverImage: string;
   websiteUrl: string;
   size: string;
   industry: string[];
@@ -35,23 +39,24 @@ type CompanyInfo = {
 export default function ListCompanyPage() {
   const dispatch = useDispatch<AppDispatch>();
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
+    id: "",
     name: "",
     tradingName: "",
     logo: "",
-    cover: "",
+    coverImage: "",
     websiteUrl: "",
     size: "",
     industry: [],
     location: [],
     description: "",
     emailDomain: "",
-    isClaimed: true,
+    isClaimed: false,
     isVerified: true,
   });
   const { data: categories, isLoading, error } = useCategories("vie");
   const [category, setCategory] = useState<{
     industry: { name: string; value: string }[];
-    location: { name: string; value: string, parent_id: string }[];
+    location: { name: string; value: string; parent_id: string }[];
     formOfWork: { name: string; value: string }[];
     jobLevel: { name: string; value: string }[];
     education: { name: string; value: string }[];
@@ -69,6 +74,51 @@ export default function ListCompanyPage() {
     advance: false,
     create: true,
   });
+
+  const handleWithToast = async (
+    funcFetch: () => Promise<AxiosResponse<any, any, {}>>,
+    funcSuccess: (response: AxiosResponse<any, any, {}>) => void,
+  ) => {
+    try {
+      const response = await funcFetch();
+      if (response.data.status === "Success") {
+        funcSuccess(response);
+        addToast({
+          type: "success",
+          description: "Fetch status: " + response.data.status,
+          title: "Success",
+        });
+        return "Success";
+      } else {
+        addToast({
+          type: "error",
+          description: "Fetch status: " + response.data.status,
+          title: "Error",
+        });
+        return response.data.status;
+      }
+    } catch (error: any) {
+      addToast({
+        title: "Lỗi",
+        description: `${error.response.statusText ?? "No response received"}`,
+        type: "error",
+      });
+      return error.response.statusText ?? "No response received";
+    }
+  };
+
+  const handleSave = async () => {
+    const formData = new FormData();
+    const { logo, coverImage, ...rest } = companyInfo;
+    if (logo) formData.append("logo", logo);
+    if (coverImage) formData.append("coverImage", coverImage);
+    formData.append("info", JSON.stringify(rest));
+    return await handleWithToast(
+      async () => await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}company/save/`, formData, { withCredentials: true }),
+      (response) => {
+        
+      })
+  };
 
   useEffect(() => {
     dispatch(setLoad(false));
@@ -103,6 +153,10 @@ export default function ListCompanyPage() {
       });
     }
   }, [isLoading, error, categories]);
+
+  useEffect(() => {
+    console.log(companyInfo);
+  }, [companyInfo]);
 
   return (
     <>
@@ -143,7 +197,7 @@ export default function ListCompanyPage() {
               <div className="flex-5">
                 <InputImage
                   className="w-full h-full"
-                  link={companyInfo.cover}
+                  link={companyInfo.coverImage}
                   outValue={(value) => setCover(value)}
                 />
               </div>
@@ -197,6 +251,7 @@ export default function ListCompanyPage() {
               value={companyInfo.industry}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
+              className="z-3"
               outValue={(value) =>
                 setCompanyInfo({ ...companyInfo, industry: value })
               }
@@ -207,7 +262,39 @@ export default function ListCompanyPage() {
               listSearch={category.location}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
-              outValue={(value) => setCompanyInfo({ ...companyInfo, location: value })}
+              className="z-2"
+              outValue={(value) =>
+                setCompanyInfo({ ...companyInfo, location: value })
+              }
+            />
+            <div className="flex gap-2 items-center">
+              <InputCheckDefault
+                value={companyInfo.isClaimed}
+                lable="Đã được nhận"
+                classAll="rounded-lg"
+                classLabel="rounded-md w-40"
+                outValue={(value) =>
+                  setCompanyInfo({ ...companyInfo, isClaimed: value })
+                }
+              />
+              <InputCheckDefault
+                value={companyInfo.isVerified}
+                lable="Đã được xác minh"
+                classAll="rounded-lg"
+                classLabel="rounded-md w-40"
+                outValue={(value) =>
+                  setCompanyInfo({ ...companyInfo, isVerified: value })
+                }
+              />
+            </div>
+            <TextAreaDefault
+              label="Mô tả"
+              classAll="rounded-lg"
+              classLabel="rounded-md w-40"
+              value={companyInfo.description}
+              outValue={(value) =>
+                setCompanyInfo({ ...companyInfo, description: value })
+              }
             />
           </div>
         </div>

@@ -49,12 +49,12 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .scroll-box::-webkit-scrollbar-thumb {
-  background: #bce4ff;
+  background: #428bff;
   border-radius: 8px;
 }
 
 .scroll-box::-webkit-scrollbar-thumb:hover {
-  background: #374b9e;
+  background: #578fca;
 }
 
 .loader {
