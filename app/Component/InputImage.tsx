@@ -18,7 +18,7 @@ export default function InputImage({
   link = null,
   outValue,
 }: ImageProps) {
-  const [preview, setPreview] = useState<string | null>(link);
+  const [preview, setPreview] = useState<string | null>(null);
   const inputImage = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,10 +52,10 @@ export default function InputImage({
         onChange={handleFileChange}
         disabled={disabled}
       />
-      {preview ? (
+      {preview || link ? (
         <Image
           alt="abc"
-          src={preview}
+          src={preview || link || ""}
           fill
           className="w-full h-full object-cover"
         />

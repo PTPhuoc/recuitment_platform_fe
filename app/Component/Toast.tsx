@@ -61,7 +61,7 @@ export default function Toast({ initToast }: { initToast: ToastType }) {
 
   return (
     <div
-      className={`flex items-stretch w-full h-15 border rounded-lg bg-white overflow-hidden ${toast ? "translate-x-0" : "translate-x-full"} duration-300`}
+      className={`flex items-stretch w-full h-15 border rounded-lg bg-white overflow-hidden shrink-0 ${toast ? "translate-x-0" : "translate-x-full"} duration-300`}
     >
       <div
         className={`flex items-center justify-center p-1 text-white ${initToast.type === "success" ? "bg-green-400" : initToast.type === "error" ? "bg-red-400" : "bg-blue-default"}`}

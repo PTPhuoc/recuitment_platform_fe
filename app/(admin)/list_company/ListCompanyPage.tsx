@@ -1,58 +1,72 @@
 "use client";
 
-import InputAddressDefault from "@/app/Component/InputAddressDefault";
+import ButtonDefault from "@/app/Component/ButtonDefault";
 import InputCheckDefault from "@/app/Component/InputCheckDefault";
 import InputImage from "@/app/Component/InputImage";
-import InputNumberDefault from "@/app/Component/InputNumberDefault";
 import InputSelectAddress from "@/app/Component/InputSelectAddress";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
-import ListSearch from "@/app/Component/ListSearch";
 import TextAreaDefault from "@/app/Component/TextAreaDefault";
 import { useToast } from "@/app/hook/ToastContext";
 import { useCategories } from "@/app/hook/useCategories";
-import { Relist } from "@/app/libs/utils";
+import { checkField, Relist, trimAllField } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch } from "@/app/store/store";
 import axios, { AxiosResponse } from "axios";
-import { Plus, X } from "lucide-react";
+import { PackageOpen, Plus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-type CompanyInfo = {
+type CompanyPaginate = {
+  count: number | 0;
+  next: string | null;
+  previous: string | null;
+  results: CompanyItem[];
+  status: string;
+} | null;
+
+type CompanyItem = {
   id: string;
   name: string;
-  tradingName: string;
+  slug: string;
+  trading_name: string;
   logo: string;
-  coverImage: string;
-  websiteUrl: string;
-  size: string;
-  industry: string[];
-  location: string[];
+  cover_image: string;
+  website_url: string;
+  company_size: string;
+  industries: string[];
+  locations: string[];
   description: string;
-  emailDomain: string;
-  isClaimed: boolean;
-  isVerified: boolean;
+  email_domain: string;
+  is_claimed: boolean;
+  is_verified: boolean;
+};
+
+type PageProps = {
+  initCompany: CompanyPaginate;
 };
 
 // app/(admin)/list_company/ListCompanyPage.tsx
-export default function ListCompanyPage() {
+export default function ListCompanyPage({ initCompany }: PageProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
+  const [companyInfo, setCompanyInfo] = useState<CompanyItem>({
     id: "",
     name: "",
-    tradingName: "",
+    slug: "",
+    trading_name: "",
     logo: "",
-    coverImage: "",
-    websiteUrl: "",
-    size: "",
-    industry: [],
-    location: [],
+    cover_image: "",
+    website_url: "",
+    company_size: "",
+    industries: [],
+    locations: [],
     description: "",
-    emailDomain: "",
-    isClaimed: false,
-    isVerified: true,
+    email_domain: "",
+    is_claimed: false,
+    is_verified: true,
   });
+  const [paginate, setPaginate] = useState<CompanyPaginate>(initCompany);
   const { data: categories, isLoading, error } = useCategories("vie");
   const [category, setCategory] = useState<{
     industry: { name: string; value: string }[];
@@ -68,11 +82,16 @@ export default function ListCompanyPage() {
     education: [],
   });
   const { addToast } = useToast();
+  const router = useRouter();
   const [logo, setLogo] = useState<File | null>(null);
   const [cover, setCover] = useState<File | null>(null);
   const [isOpen, setIsOpen] = useState({
     advance: false,
-    create: true,
+    create: false,
+  });
+  const [search, setSearch] = useState({
+    name: "",
+    page: 1,
   });
 
   const handleWithToast = async (
@@ -107,17 +126,71 @@ export default function ListCompanyPage() {
     }
   };
 
+  const handleGet = async () => {
+    return await handleWithToast(
+      async () =>
+        await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}company/many_search/?page=${search.page}&name=${search.name}`,
+        ),
+      (response) => {
+        setPaginate(response.data);
+        router.push(`/list_company?name=${search.name}&page=${search.page}`, {
+          scroll: false,
+        });
+      },
+    );
+  };
+
   const handleSave = async () => {
     const formData = new FormData();
-    const { logo, coverImage, ...rest } = companyInfo;
     if (logo) formData.append("logo", logo);
-    if (coverImage) formData.append("coverImage", coverImage);
-    formData.append("info", JSON.stringify(rest));
+    if (cover) formData.append("coverImage", cover);
+    const trimData = trimAllField({
+      ...companyInfo,
+    });
+    formData.append("data", JSON.stringify(trimData));
     return await handleWithToast(
-      async () => await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}company/save/`, formData, { withCredentials: true }),
-      (response) => {
-        
-      })
+      async () =>
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}company/save/`,
+          formData,
+          { withCredentials: true },
+        ),
+      async (response) => {
+        setCompanyInfo({
+          id: "",
+          name: "",
+          slug: "",
+          trading_name: "",
+          logo: "",
+          cover_image: "",
+          website_url: "",
+          company_size: "",
+          industries: [],
+          locations: [],
+          description: "",
+          email_domain: "",
+          is_claimed: false,
+          is_verified: true,
+        });
+        await handleGet();
+      },
+    );
+  };
+
+  const check = () => {
+    const {
+      id,
+      logo,
+      cover_image,
+      description,
+      is_claimed,
+      is_verified,
+      trading_name,
+      slug,
+      ...rest
+    } = companyInfo;
+    return checkField(rest);
   };
 
   useEffect(() => {
@@ -170,7 +243,59 @@ export default function ListCompanyPage() {
             <Plus className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default"></div>
+        <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default">
+          <div className="flex gap-2 items-center flex-wrap">
+            <InputTextDefault
+              lable="Tên công ty"
+              placeholder="Nhập tên công ty"
+              className="flex-1"
+              classDisable="flex-1"
+              classAll="rounded-xl"
+              value={search.name}
+              outValue={(value) => setSearch({ ...search, name: value })}
+            />
+            <ButtonDefault
+              lable="Tìm kiếm"
+              classAll="w-50"
+              funsHandle={async () => {
+                return await handleGet();
+              }}
+            />
+          </div>
+          <div className="flex-1 p-2 flex flex-col gap-2 border-2 border-blue-default rounded-xl">
+            {paginate && paginate?.results?.length > 0 ? (
+              paginate.results.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex p-2 gap-2 items-center rounded-lg border-2 border-light-blue shadow-default duration-200 ease-in hover:border-dark-blue active:shadow-none"
+                  onClick={() => {
+                    setIsOpen({ ...isOpen, create: true });
+                    setCompanyInfo({
+                      ...item,
+                    });
+                  }}
+                >
+                  <div className="flex-1 flex flex-col">
+                    <p className="font-bold text-[30px]">{item.name}</p>
+                    <p>{item.trading_name}</p>
+                  </div>
+                  <ButtonDefault
+                    lable="Xóa"
+                    className="bg-red-400 border-red-400 hover:text-red-400"
+                    classAll="w-30"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="flex-1 flex flex-col justify-center items-center">
+                <PackageOpen className="h-20 w-20 text-zinc-400" />
+                <p className="font-bold text-zinc-400">
+                  Không tìm thấy Công ty nào
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <div
         className={`fixed top-0 left-0 z-2 flex w-full h-full justify-end duration-500 ease-in-out ${isOpen.create ? "translate-x-0" : "translate-x-full"}`}
@@ -192,12 +317,12 @@ export default function ListCompanyPage() {
               <X className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex-1 flex flex-col gap-2 px-3">
-            <div className="relative flex flex-col h-60">
+          <div className="flex-1 flex flex-col gap-2 px-3 overflow-auto no-scroll">
+            <div className="relative flex flex-col h-60 shrink-0">
               <div className="flex-5">
                 <InputImage
                   className="w-full h-full"
-                  link={companyInfo.coverImage}
+                  link={companyInfo.cover_image}
                   outValue={(value) => setCover(value)}
                 />
               </div>
@@ -221,74 +346,87 @@ export default function ListCompanyPage() {
               lable="Tên thương mại"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
-              value={companyInfo.tradingName}
+              value={companyInfo.trading_name}
               outValue={(value) =>
-                setCompanyInfo({ ...companyInfo, tradingName: value })
+                setCompanyInfo({ ...companyInfo, trading_name: value })
               }
             />
             <InputTextDefault
               lable="Địa chỉ website"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
-              value={companyInfo.websiteUrl}
+              placeholder="https://your_website"
+              value={companyInfo.website_url}
               outValue={(value) =>
-                setCompanyInfo({ ...companyInfo, websiteUrl: value })
+                setCompanyInfo({ ...companyInfo, website_url: value })
+              }
+            />
+            <InputTextDefault
+              lable="Tên domain"
+              classAll="rounded-lg"
+              classLabel="rounded-md w-40"
+              placeholder="your_domain.com"
+              value={companyInfo.email_domain}
+              outValue={(value) =>
+                setCompanyInfo({ ...companyInfo, email_domain: value })
               }
             />
             <InputTextDefault
               lable="Quy mô công ty"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
-              regex={/[^0-9-]/}
-              value={companyInfo.size}
+              placeholder="10 - 50"
+              regex={/[^0-9-+ ]/}
+              value={companyInfo.company_size}
               outValue={(value) =>
-                setCompanyInfo({ ...companyInfo, size: value })
+                setCompanyInfo({ ...companyInfo, company_size: value })
               }
             />
             <InputSelectDefault
               label="Lĩnh vực công ty"
               listSearch={category.industry}
-              value={companyInfo.industry}
+              value={companyInfo.industries}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               className="z-3"
               outValue={(value) =>
-                setCompanyInfo({ ...companyInfo, industry: value })
+                setCompanyInfo({ ...companyInfo, industries: value })
               }
             />
             <InputSelectAddress
               label="Địa chỉ công ty"
-              value={companyInfo.location}
+              value={companyInfo.locations}
               listSearch={category.location}
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               className="z-2"
               outValue={(value) =>
-                setCompanyInfo({ ...companyInfo, location: value })
+                setCompanyInfo({ ...companyInfo, locations: value })
               }
             />
             <div className="flex gap-2 items-center">
               <InputCheckDefault
-                value={companyInfo.isClaimed}
+                value={companyInfo.is_claimed}
                 lable="Đã được nhận"
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 outValue={(value) =>
-                  setCompanyInfo({ ...companyInfo, isClaimed: value })
+                  setCompanyInfo({ ...companyInfo, is_claimed: value })
                 }
               />
               <InputCheckDefault
-                value={companyInfo.isVerified}
+                value={companyInfo.is_verified}
                 lable="Đã được xác minh"
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 outValue={(value) =>
-                  setCompanyInfo({ ...companyInfo, isVerified: value })
+                  setCompanyInfo({ ...companyInfo, is_verified: value })
                 }
               />
             </div>
             <TextAreaDefault
               label="Mô tả"
+              className="shrink-0"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               value={companyInfo.description}
@@ -296,6 +434,42 @@ export default function ListCompanyPage() {
                 setCompanyInfo({ ...companyInfo, description: value })
               }
             />
+            <div className="flex gap-2 items-center justify-end">
+              {companyInfo.id && (
+                <ButtonDefault
+                  lable="Hủy"
+                  className="bg-red-400 border-red-400 hover:text-red-400"
+                  classAll="w-50"
+                  funsHandle={() => {
+                    setCompanyInfo({
+                      id: "",
+                      name: "",
+                      slug: "",
+                      trading_name: "",
+                      logo: "",
+                      cover_image: "",
+                      website_url: "",
+                      company_size: "",
+                      industries: [],
+                      locations: [],
+                      description: "",
+                      email_domain: "",
+                      is_claimed: false,
+                      is_verified: true,
+                    });
+                    return "Success";
+                  }}
+                />
+              )}
+              <ButtonDefault
+                lable={companyInfo.id ? "Câp nhật" : "Xác nhận"}
+                classAll="w-50"
+                funsHandle={async () => {
+                  return await handleSave();
+                }}
+                disabled={!check()}
+              />
+            </div>
           </div>
         </div>
       </div>

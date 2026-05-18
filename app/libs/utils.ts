@@ -120,6 +120,7 @@ export const checkField = (obj: Record<string, any>): boolean => {
   return Object.values(obj).every((value) => {
     if (value === null || value === undefined) return false;
     if (typeof value === "string" && value.trim() === "") return false;
+    if (Array.isArray(value) && value.length === 0) return false;
     return true;
   });
 };
@@ -230,7 +231,7 @@ type ReListItem = {
 
 export const Relist = <T extends ReListItem>(
   list: T[] | null,
-): (Omit<T, 'translations'> & { name: string; value: string })[] => {
+): (Omit<T, "translations"> & { name: string; value: string })[] => {
   if (!list) return [];
   return list.map((item) => {
     const { translations, ...rest } = item;
@@ -241,3 +242,10 @@ export const Relist = <T extends ReListItem>(
     };
   });
 };
+
+export const trimAllField = (obj: Record<string, any>) => {
+  for (const key in obj) {
+    if (typeof obj[key] === "string") obj[key] = obj[key].trim();
+  }
+  return obj;
+}
