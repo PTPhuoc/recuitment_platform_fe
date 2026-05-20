@@ -1,11 +1,14 @@
 "use client";
 
 import ButtonDefault from "@/app/Component/ButtonDefault";
+import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
+import ImageShow from "@/app/Component/ImageShow";
 import InputCheckDefault from "@/app/Component/InputCheckDefault";
 import InputImage from "@/app/Component/InputImage";
 import InputSelectAddress from "@/app/Component/InputSelectAddress";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
+import { usePopup } from "@/app/Component/Popup";
 import TextAreaDefault from "@/app/Component/TextAreaDefault";
 import { useToast } from "@/app/hook/ToastContext";
 import { useCategories } from "@/app/hook/useCategories";
@@ -31,8 +34,10 @@ type CompanyItem = {
   name: string;
   slug: string;
   trading_name: string;
-  logo: string;
-  cover_image: string;
+  logo_url: string;
+  logo_public_id: string;
+  cover_url: string;
+  cover_public_id: string;
   website_url: string;
   company_size: string;
   industries: string[];
@@ -55,8 +60,10 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
     name: "",
     slug: "",
     trading_name: "",
-    logo: "",
-    cover_image: "",
+    logo_url: "",
+    logo_public_id: "",
+    cover_url: "",
+    cover_public_id: "",
     website_url: "",
     company_size: "",
     industries: [],
@@ -82,6 +89,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
     education: [],
   });
   const { addToast } = useToast();
+  const popup = usePopup();
   const router = useRouter();
   const [logo, setLogo] = useState<File | null>(null);
   const [cover, setCover] = useState<File | null>(null);
@@ -141,6 +149,12 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
     );
   };
 
+  const handleChangePage = async (link: string) => {
+    const response = await axios.get(link);
+    if (response.data.status === "Success") setPaginate(response.data);
+    return response.data.status;
+  };
+
   const handleSave = async () => {
     const formData = new FormData();
     if (logo) formData.append("logo", logo);
@@ -162,8 +176,10 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
           name: "",
           slug: "",
           trading_name: "",
-          logo: "",
-          cover_image: "",
+          logo_url: "",
+          logo_public_id: "",
+          cover_url: "",
+          cover_public_id: "",
           website_url: "",
           company_size: "",
           industries: [],
@@ -178,11 +194,26 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
     );
   };
 
+  const handleDelete = async (id: string) => {
+    return await handleWithToast(
+      async () =>
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}company/item/?id=${id}`,
+          { withCredentials: true },
+        ),
+      async (response) => {
+        await handleGet();
+      },
+    );
+  };
+
   const check = () => {
     const {
       id,
-      logo,
-      cover_image,
+      logo_url,
+      logo_public_id,
+      cover_url,
+      cover_public_id,
       description,
       is_claimed,
       is_verified,
@@ -275,6 +306,13 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
                     });
                   }}
                 >
+                  <ImageShow
+                    link={item.logo_url}
+                    alt={item.name}
+                    typeShape="square"
+                    classImage="object-contain"
+                    className="rounded-lg"
+                  />
                   <div className="flex-1 flex flex-col">
                     <p className="font-bold text-[30px]">{item.name}</p>
                     <p>{item.trading_name}</p>
@@ -283,6 +321,16 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
                     lable="Xóa"
                     className="bg-red-400 border-red-400 hover:text-red-400"
                     classAll="w-30"
+                    funsHandle={() => {
+                      popup({
+                        isOpen: true,
+                        message: `Bạn có chắc muốn xóa Công ty: ${item.name}`,
+                        title: "Xóa Công ty",
+                        typeSubmit: "YrN",
+                        handleFuns: () => handleDelete(item.id),
+                      });
+                      return "Success";
+                    }}
                   />
                 </div>
               ))
@@ -295,6 +343,12 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               </div>
             )}
           </div>
+          <ChangeNumberPage
+            next={paginate?.next || null}
+            previous={paginate?.previous || null}
+            onNextPage={(url) => handleChangePage(url)}
+            onPreviousPage={(url) => handleChangePage(url)}
+          />
         </div>
       </div>
       <div
@@ -322,14 +376,14 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               <div className="flex-5">
                 <InputImage
                   className="w-full h-full"
-                  link={companyInfo.cover_image}
+                  link={companyInfo.cover_url}
                   outValue={(value) => setCover(value)}
                 />
               </div>
               <div className="flex-1"></div>
               <InputImage
                 className="absolute bottom-0 left-10"
-                link={companyInfo.logo}
+                link={companyInfo.logo_url}
                 outValue={(value) => setLogo(value)}
               />
             </div>
@@ -446,8 +500,10 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
                       name: "",
                       slug: "",
                       trading_name: "",
-                      logo: "",
-                      cover_image: "",
+                      logo_url: "",
+                      logo_public_id: "",
+                      cover_url: "",
+                      cover_public_id: "",
                       website_url: "",
                       company_size: "",
                       industries: [],
