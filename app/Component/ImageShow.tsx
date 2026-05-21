@@ -66,6 +66,7 @@ export default function ImageShow({
           alt={alt}
           fill
           className={cn(`object-cover p-1`, classImage)}
+          sizes="(max-width: 768px) 100vw, 33vw"
         />
       ) : (
         <div className="flex flex-1 justify-center items-center">

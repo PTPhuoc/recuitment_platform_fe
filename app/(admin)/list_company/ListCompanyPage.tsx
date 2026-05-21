@@ -142,6 +142,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
         ),
       (response) => {
         setPaginate(response.data);
+        setSearch({ name: search.name, page: 1 });
         router.push(`/list_company?name=${search.name}&page=${search.page}`, {
           scroll: false,
         });
@@ -149,9 +150,9 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
     );
   };
 
-  const handleChangePage = async (link: string) => {
+  const handleChangePage = async (link: string, type: "next" | "previous") => {
     const response = await axios.get(link);
-    if (response.data.status === "Success") setPaginate(response.data);
+    if (response.data.status === "Success") {setPaginate(response.data), setSearch({...search, page: search.page + (type === "next" ? 1 : -1)})};
     return response.data.status;
   };
 
@@ -160,7 +161,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
     if (logo) formData.append("logo", logo);
     if (cover) formData.append("coverImage", cover);
     const trimData = trimAllField({
-      ...companyInfo,
+      ...companyInfo, slug: companyInfo.name.toLowerCase()
     });
     formData.append("data", JSON.stringify(trimData));
     return await handleWithToast(
@@ -264,7 +265,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
 
   return (
     <>
-      <div className="flex z-1 flex-col  w-3/4 max-lg:w-[95%] max-sm:w-full h-full gap-3 max-lg:gap-2 py-3 max-lg:py-2 items-stretch overflow-auto no-scroll">
+      <div className="flex z-1 flex-col w-3/4 max-lg:w-[95%] max-sm:w-full min-w-0 h-screen gap-3 max-lg:gap-2 py-3 max-lg:py-2 items-stretch overflow-auto no-scroll">
         <div className="flex justify-between items-center p-3 bg-blue-default sm:rounded-2xl shadow-default">
           <p className="font-bold text-light-blue">Danh sách Công ty</p>
           <button
@@ -275,25 +276,25 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
           </button>
         </div>
         <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default">
-          <div className="flex gap-2 items-center flex-wrap">
+          <div className="flex gap-2 max-md:flex-col">
             <InputTextDefault
               lable="Tên công ty"
               placeholder="Nhập tên công ty"
-              className="flex-1"
-              classDisable="flex-1"
+              className="flex-5"
+              classDisable="flex-5"
               classAll="rounded-xl"
               value={search.name}
               outValue={(value) => setSearch({ ...search, name: value })}
             />
             <ButtonDefault
               lable="Tìm kiếm"
-              classAll="w-50"
+              classAll="flex-1"
               funsHandle={async () => {
                 return await handleGet();
               }}
             />
           </div>
-          <div className="flex-1 p-2 flex flex-col gap-2 border-2 border-blue-default rounded-xl">
+          <div className="flex-1 p-2 flex flex-col gap-2 border-2 border-blue-default rounded-xl min-w-0">
             {paginate && paginate?.results?.length > 0 ? (
               paginate.results.map((item) => (
                 <div
@@ -313,14 +314,14 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
                     classImage="object-contain"
                     className="rounded-lg"
                   />
-                  <div className="flex-1 flex flex-col">
-                    <p className="font-bold text-[30px]">{item.name}</p>
+                  <div className="flex-1 flex flex-col min-w-0">
+                    <p className="font-bold text-[30px] truncate">{item.name}</p>
                     <p>{item.trading_name}</p>
                   </div>
                   <ButtonDefault
                     lable="Xóa"
                     className="bg-red-400 border-red-400 hover:text-red-400"
-                    classAll="w-30"
+                    classAll="w-30 max-md:w-15"
                     funsHandle={() => {
                       popup({
                         isOpen: true,
@@ -346,8 +347,8 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
           <ChangeNumberPage
             next={paginate?.next || null}
             previous={paginate?.previous || null}
-            onNextPage={(url) => handleChangePage(url)}
-            onPreviousPage={(url) => handleChangePage(url)}
+            onNextPage={(url) => handleChangePage(url, "next")}
+            onPreviousPage={(url) => handleChangePage(url, "previous")}
           />
         </div>
       </div>
