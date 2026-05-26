@@ -82,8 +82,6 @@ export default function InputAddressDefault({
     return () => clearTimeout(time);
   }, [inputValue, listSearch]);
 
-
-
   return (
     <div className={cn("flex flex-col gap-1", classAll)}>
       <div

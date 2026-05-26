@@ -44,18 +44,17 @@ export default function InputSelectAddress({
     return map;
   }, [listSearch]);
 
-  const findParent = (parentId: string) => {
+  const findParent = (id: string) => {
     let list = [];
-    let currentId = parentId;
-    while (currentId && parentMap.has(currentId)) {
-      const item = parentMap.get(currentId)!;
+    let currentItem = parentMap.get(id);
+    while (currentItem?.parent_id && parentMap.has(currentItem.parent_id)) {
+      const item = parentMap.get(currentItem.parent_id)!;
       list.push(item.name);
-      currentId = item.parent_id;
+      currentItem = item;
     }
     return list;
   };
 
-  // Tạo danh sách đã chọn từ value props (để hiển thị)
   const selectedItems = useMemo(() => {
     return value.map((id) => ({
       name: parentMap.get(id)?.name || "",

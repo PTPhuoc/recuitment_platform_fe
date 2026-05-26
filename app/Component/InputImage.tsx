@@ -58,6 +58,7 @@ export default function InputImage({
           src={preview || link || ""}
           fill
           className="w-full h-full object-cover"
+          sizes="(max-width: 768px) 100vw, 33vw"
         />
       ) : (
         <ImageIcon className="w-10 h-10 text-zinc-300" />
