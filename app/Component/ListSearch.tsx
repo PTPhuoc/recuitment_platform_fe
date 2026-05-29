@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 type ListSearchValue = {
   lable?: string;
   className?: string;
+  classAll?: string;
   classDisable?: string;
   classLabel?: string;
   placeholder?: string;
@@ -22,6 +23,7 @@ export default function ListSearch({
   value = "",
   lable,
   className,
+  classAll,
   classDisable,
   classLabel,
   placeholder,
@@ -66,16 +68,16 @@ export default function ListSearch({
         disable
           ? cn(
               "relative flex flex-wrap bg-white items-stretch p-1 rounded-xl border-2 border-zinc-400 shadow-default min-w-50",
-              classDisable,
+              classDisable, classAll
             )
           : cn(
               `group relative flex flex-wrap bg-white items-stretch p-1 rounded-xl border-2 border-blue-default shadow-default min-w-50`,
-              className,
+              className, classAll
             )
       }
     >
       <div
-        className={cn(`flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disable ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`, classLabel)}
+        className={cn(`flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disable ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`, classLabel, classAll)}
       >
         <List className="w-5 h-5" />
         {lable && <p className="flex-1 text-center">{lable}</p>}

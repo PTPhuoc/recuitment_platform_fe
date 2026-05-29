@@ -37,6 +37,10 @@ const fetchCategories = async (
     slug: string;
     translations: CategoryTranslateItem[];
   }[];
+  company: {
+    id: string;
+    name: string;
+  }[]
 }> => {
   const response = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}web/categories/?lang=${lang}`,
@@ -48,6 +52,7 @@ const fetchCategories = async (
     formOfWork: categories.form_of_work,
     jobLevel: categories.job_level,
     education: categories.education,
+    company: categories.company
   };
 };
 

@@ -6,14 +6,24 @@ import { CalendarDays } from "lucide-react";
 import { cn } from "../libs/utils";
 
 type PageProps = {
+  classAll?: string;
+  classDisable?: string;
   className?: string;
-  dateValue?: Date;
+  classLabel?: string;
+  label?: string
+  disabled?: boolean;
+  dateValue?: Date | "";
   maxCurrentYear?: boolean;
   outValue: (value: Date | "") => void;
 };
 
 export default function DatePicker({
   className,
+  classAll,
+  classDisable,
+  classLabel,
+  label,
+  disabled = false,
   dateValue,
   maxCurrentYear = false,
   outValue,
@@ -129,10 +139,19 @@ export default function DatePicker({
 
   return (
     <div
-      className={cn(
-        "group relative flex items-stretch min-w-50 h-10 p-1 rounded-xl border-2 border-blue-default",
-        className,
-      )}
+      className={
+        disabled
+          ? cn(
+              "relative flex items-stretch min-w-50 h-10 p-1 rounded-xl border-2 border-zinc-300",
+              classDisable,
+              classAll,
+            )
+          : cn(
+              "group relative flex items-stretch min-w-50 h-10 p-1 rounded-xl border-2 border-blue-default",
+              className,
+              classAll,
+            )
+      }
     >
       <p
         className={`absolute z-1 left-0 px-1 mb-1 rounded-sm w-full text-white bg-red-400 transition-all duration-200 ease-in-out ${isDate.match ? "bottom-0" : "bottom-full"}`}
@@ -140,14 +159,22 @@ export default function DatePicker({
         {isDate.message}
       </p>
       <div className="flex-1 flex gap-2 items-stretch z-2">
-        <div className="flex items-center gap-2 px-2 rounded-xl bg-light-blue text-blue-default font-bold">
+        <div
+          className={cn(
+            `flex items-center gap-2 px-2 rounded-xl ${disabled ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}  font-bold`,
+            classLabel,classAll,
+          )}
+        >
           <CalendarDays className="h-5 w-5" />
+          {label && <p className="flex-1 text-center">{label}</p>}
         </div>
         <div className="flex items-center gap-1">
           <input
             type="text"
             inputMode="numeric"
+            disabled={disabled}
             value={inputValue.date}
+            placeholder="dd"
             className="w-7 outline-none text-center"
             onFocus={() => setIsOpen(true)}
             onBlur={() => setIsOpen(false)}
@@ -161,7 +188,9 @@ export default function DatePicker({
           <input
             type="text"
             inputMode="numeric"
+            disabled={disabled}
             value={inputValue.month}
+            placeholder="MM"
             className="w-7 outline-none text-center"
             onFocus={() => setIsOpen(true)}
             onBlur={() => setIsOpen(false)}
@@ -175,8 +204,10 @@ export default function DatePicker({
           <input
             type="text"
             inputMode="numeric"
+            disabled={disabled}
             value={inputValue.year}
-            className="w-7 outline-none text-center"
+            placeholder="yyyy"
+            className="w-10 outline-none text-center"
             onFocus={() => setIsOpen(true)}
             onChange={(e) => {
               let val = e.target.value;
@@ -194,7 +225,8 @@ export default function DatePicker({
       </div>
       <div
         className={cn(
-          `absolute w-full top-full left-0 mt-1 z-1 bg-white rounded-xl border-2 border-transparent duration-200 ease-in group-hover:border-blue-default ${isOpen && "border-blue-default"}`,
+          `absolute w-full max-w-70 top-full left-0 mt-1 z-1 bg-white rounded-xl border-2 border-transparent duration-200 ease-in group-hover:border-blue-default ${isOpen && "border-blue-default"}`,
+          classAll,
         )}
       >
         <div

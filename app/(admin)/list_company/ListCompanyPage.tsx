@@ -254,14 +254,14 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
         location: Relist(categories.location),
         formOfWork: Relist(categories.formOfWork),
         jobLevel: Relist(categories.jobLevel),
-        education: Relist(categories.education),
+        education: Relist(categories.education)
       });
     }
   }, [isLoading, error, categories]);
 
-  useEffect(() => {
-    console.log(companyInfo);
-  }, [companyInfo]);
+  // useEffect(() => {
+  //   console.log(companyInfo);
+  // }, [companyInfo]);
 
   return (
     <>
