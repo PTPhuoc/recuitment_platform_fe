@@ -5,7 +5,7 @@ import { cn, handleSearch } from "../libs/utils";
 import { useEffect, useMemo, useState } from "react";
 
 type ListSearchValue = {
-  lable?: string;
+  label?: string;
   className?: string;
   classAll?: string;
   classDisable?: string;
@@ -21,7 +21,7 @@ type ListSearchValue = {
 
 export default function ListSearch({
   value = "",
-  lable,
+  label,
   className,
   classAll,
   classDisable,
@@ -80,7 +80,7 @@ export default function ListSearch({
         className={cn(`flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disable ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`, classLabel, classAll)}
       >
         <List className="w-5 h-5" />
-        {lable && <p className="flex-1 text-center">{lable}</p>}
+        {label && <p className="flex-1 text-center">{label}</p>}
       </div>
       <input
         value={searchValue}

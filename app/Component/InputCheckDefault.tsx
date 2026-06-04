@@ -9,7 +9,7 @@ type InputCheckProps = {
   classAll?: string;
   classLabel?: string;
   disabled?: boolean;
-  lable?: string;
+  label?: string;
   value: boolean;
   outValue: (value: boolean) => void;
 };
@@ -21,7 +21,7 @@ export default function InputCheckDefault({
   classAll,
   classLabel,
   disabled = false,
-  lable,
+  label,
   value = false,
   outValue,
 }: InputCheckProps) {
@@ -43,7 +43,7 @@ export default function InputCheckDefault({
             )
       }
     >
-      {lable && (
+      {label && (
         <label
           htmlFor={id}
           className={
@@ -52,7 +52,7 @@ export default function InputCheckDefault({
               : cn("cursor-pointer", classLabel, classAll)
           }
         >
-          {lable}
+          {label}
         </label>
       )}
       <div className="flex items-center checkbox-wrapper-2">

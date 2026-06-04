@@ -13,8 +13,8 @@ type InputProps = {
   classAll?: string;
   disabled?: boolean;
   placeholder?: string;
-  value?: string;
-  lable?: string;
+  value: Record<string, any>;
+  label?: string;
   outValue: (value: Record<string, any>) => void;
 };
 
@@ -25,8 +25,8 @@ export default function InputTextEditer({
   classAll,
   disabled = false,
   placeholder,
-  value = "",
-  lable,
+  value,
+  label,
   outValue,
 }: InputProps) {
   const editor = useEditor({
@@ -120,7 +120,7 @@ export default function InputTextEditer({
             classAll,
           )}
         >
-          {lable && <p className="flex-1 text-center">{lable}</p>}
+          {label && <p className="flex-1 text-center">{label}</p>}
         </div>
         <Toolbar />
       </div>

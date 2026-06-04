@@ -1,5 +1,6 @@
 "use client";
 
+import ButtonDefault from "@/app/Component/ButtonDefault";
 import DatePicker from "@/app/Component/DateSearch";
 import InputAddressDefault from "@/app/Component/InputAddressDefault";
 import InputNumberDefault from "@/app/Component/InputNumberDefault";
@@ -12,8 +13,9 @@ import { useCategories } from "@/app/hook/useCategories";
 import { Relist } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch } from "@/app/store/store";
-import { Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import { ArrowDown, ArrowUp, Plus, PlusIcon, Trash, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 const listStatus = [
@@ -61,6 +63,7 @@ type PageValue = {
   } | null;
 };
 
+// app/(admin)/list_job/ListJobPage.tsx
 export default function ListJobPage({ jobs }: PageValue) {
   const dispatch = useDispatch<AppDispatch>();
   const { addToast } = useToast();
@@ -107,6 +110,145 @@ export default function ListJobPage({ jobs }: PageValue) {
     create: true,
   });
 
+  const handleWithToast = async (
+      funcFetch: () => Promise<AxiosResponse<any, any, {}>>,
+      funcSuccess: (response: AxiosResponse<any, any, {}>) => void,
+    ) => {
+      try {
+        const response = await funcFetch();
+        if (response.data.status === "Success") {
+          funcSuccess(response);
+          addToast({
+            type: "success",
+            description: "Fetch status: " + response.data.status,
+            title: "Success",
+          });
+          return "Success";
+        } else {
+          addToast({
+            type: "error",
+            description: "Fetch status: " + response.data.status,
+            title: "Error",
+          });
+          return response.data.status;
+        }
+      } catch (error: any) {
+        addToast({
+          title: "Lỗi",
+          description: `${error.response.statusText ?? "No response received"}`,
+          type: "error",
+        });
+        return error.response.statusText ?? "No response received";
+      }
+    };
+
+  const handleChangedescriptions = (value: {
+    id: string;
+    job: string;
+    title: string;
+    description: Record<string, any>;
+    index: number;
+  }) => {
+    if (jobInfo.descriptions.length > 0) {
+      const newDescriptions = jobInfo.descriptions.map((item) =>
+        item.index === value.index ? value : item,
+      );
+      setJobInfo((prev) => {
+        return { ...prev, descriptions: newDescriptions };
+      });
+    } else {
+      setJobInfo((prev) => {
+        return { ...prev, descriptions: [value] };
+      });
+    }
+  };
+
+  const handleMoveUp = (currentItem: {
+    id: string;
+    job: string;
+    title: string;
+    description: Record<string, any>;
+    index: number;
+  }) => {
+    let tempObject: {
+      id: string;
+      job: string;
+      title: string;
+      description: Record<string, any>;
+      index: number;
+    } | null = null;
+    let tempIndex = currentItem.index;
+    const newDescriptions = jobInfo.descriptions.map((item, index) => {
+      if (index === tempIndex - 1) {
+        tempObject = { ...item, index: item.index + 1 };
+        return { ...currentItem, index: currentItem.index - 1 };
+      }
+      if (index === tempIndex) {
+        return tempObject ? tempObject : item;
+      }
+      return item;
+    });
+    setJobInfo((prev) => {
+      return { ...prev, descriptions: newDescriptions };
+    });
+  };
+
+  const handleMoveDown = (currentItem: {
+    id: string;
+    job: string;
+    title: string;
+    description: Record<string, any>;
+    index: number;
+  }) => {
+    let tempIndex = currentItem.index;
+    let tempObject = jobInfo.descriptions.find(
+      (item) => item.index === tempIndex + 1,
+    );
+    const newDescriptions = jobInfo.descriptions.map((item, index) => {
+      if (index === tempIndex) {
+        return tempObject ? { ...tempObject, index: tempIndex } : item;
+      }
+      if (index === tempIndex + 1) {
+        return { ...currentItem, index: currentItem.index + 1 };
+      }
+      return item;
+    });
+    setJobInfo((prev) => {
+      return { ...prev, descriptions: newDescriptions };
+    });
+  };
+
+  const handleDelete = (index: number) => {
+    const newDescriptions: {
+      id: string;
+      job: string;
+      title: string;
+      description: Record<string, any>;
+      index: number;
+    }[] = [];
+    jobInfo.descriptions.forEach((item) => {
+      if (item.index !== index) {
+        newDescriptions.push(item.index > index ? { ...item, index: item.index - 1 } : item);
+      }
+    });
+    setJobInfo((prev) => {
+      return { ...prev, descriptions: newDescriptions };
+    });
+  };
+
+  // const handleGet = async () => {
+  //   const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}job/many_search/`)
+  // }
+
+  // const handleSave = async () => {
+  //   await handleWithToast(
+  //     async () => await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}job/save/`, jobInfo, { withCredentials: true }),
+  //     async (response) => {
+        
+  //     }
+  //   )
+  // }
+
   useEffect(() => {
     dispatch(setLoad(false));
   }, []);
@@ -141,6 +283,10 @@ export default function ListJobPage({ jobs }: PageValue) {
       });
     }
   }, [isLoading, error, categories]);
+
+  useEffect(() => {
+    console.log(jobInfo);
+  }, [jobInfo]);
 
   return (
     <>
@@ -181,7 +327,7 @@ export default function ListJobPage({ jobs }: PageValue) {
                 <span className="flex-1 border-b-2 border-dark-blue"></span>
               </div>
               <InputTextDefault
-                lable="Tên tuyển dụng"
+                label="Tên tuyển dụng"
                 value={jobInfo.name}
                 outValue={(value) => setJobInfo({ ...jobInfo, name: value })}
                 classAll="rounded-lg"
@@ -190,7 +336,7 @@ export default function ListJobPage({ jobs }: PageValue) {
               <ListSearch
                 attrGet="id"
                 attrSearch="name"
-                lable="Công ty tuyển"
+                label="Công ty tuyển"
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 listValue={category.company}
@@ -198,7 +344,7 @@ export default function ListJobPage({ jobs }: PageValue) {
                 value={jobInfo.company}
               />
               <InputTextDefault
-                lable="Đường dẩn nguồn"
+                label="Đường dẩn nguồn"
                 value={jobInfo.source_link}
                 outValue={(value) =>
                   setJobInfo({ ...jobInfo, source_link: value })
@@ -210,7 +356,7 @@ export default function ListJobPage({ jobs }: PageValue) {
               <ListSearch
                 attrGet="id"
                 attrSearch="name"
-                lable="Trạng thái"
+                label="Trạng thái"
                 value={jobInfo.status}
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
@@ -354,11 +500,85 @@ export default function ListJobPage({ jobs }: PageValue) {
                 <p className="font-bold">Mô tả tuyển dụng</p>
                 <span className="flex-1 border-b-2 border-dark-blue"></span>
               </div>
-              {jobInfo.descriptions.length > 0 && jobInfo.descriptions.map((item, index) => (
-                <div className="flex flex-col gap-2">
-                  
-                </div>
-              ))}
+              {jobInfo.descriptions.length > 0 &&
+                jobInfo.descriptions.map((item, index) => (
+                  <div
+                    key={item.index}
+                    className="flex flex-col gap-2 p-2 rounded-lg bg-white border-2 border-blue-default"
+                  >
+                    <div className="flex gap-2">
+                      <InputTextDefault
+                        classAll="rounded-lg"
+                        className="flex-1"
+                        classLabel="rounded-md w-45"
+                        label="Tiêu đề"
+                        placeholder={`Tiêu đề ${index + 1}`}
+                        value={item.title}
+                        outValue={(value) =>
+                          handleChangedescriptions({
+                            ...item,
+                            title: value,
+                          })
+                        }
+                      />
+                      <button
+                        className={`flex items-center justify-center p-2 rounded-lg bg-white border-2 ${item.index === 0 ? "border-zinc-400 text-zinc-400 cursor-not-allowed" : "border-blue-default text-blue-default hover:bg-blue-default hover:text-white cursor-pointer"} duration-200 ease-in`}
+                        disabled={item.index === 0}
+                        onClick={() => handleMoveUp({ ...item })}
+                      >
+                        <ArrowUp className="w-5 h-5" />
+                      </button>
+                      <button
+                        className={`flex items-center justify-center p-2 rounded-lg bg-white border-2 ${item.index === jobInfo.descriptions.length - 1 ? "border-zinc-400 text-zinc-400 cursor-not-allowed" : "border-blue-default text-blue-default hover:bg-blue-default hover:text-white cursor-pointer"} duration-200 ease-in`}
+                        disabled={
+                          item.index === jobInfo.descriptions.length - 1
+                        }
+                        onClick={() => handleMoveDown({ ...item })}
+                      >
+                        <ArrowDown className="w-5 h-5" />
+                      </button>
+                      <button
+                        className="flex items-center justify-center p-2 rounded-lg bg-red-400 border-2 border-red-400 text-white duration-200 ease-in hover:bg-white hover:text-red-400"
+                        onClick={() => handleDelete(item.index)}
+                      >
+                        <Trash className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <InputTextEditer
+                      classAll="rounded-lg"
+                      classLabel="rounded-md w-45"
+                      label="Mô tả"
+                      placeholder={`Mô tả ${index + 1}`}
+                      value={item.description}
+                      outValue={(value) =>
+                        handleChangedescriptions({
+                          ...item,
+                          description: value,
+                        })
+                      }
+                    />
+                  </div>
+                ))}
+              <button
+                className="flex items-center justify-center p-2 rounded-lg bg-white border-2 border-blue-default text-blue-default duration-200 ease-in hover:bg-blue-default hover:text-white"
+                onClick={() => {
+                  setJobInfo({
+                    ...jobInfo,
+                    descriptions: [
+                      ...jobInfo.descriptions,
+                      {
+                        id: "",
+                        job: "",
+                        title: "",
+                        description: {},
+                        index: jobInfo.descriptions.length,
+                      },
+                    ],
+                  });
+                }}
+              >
+                <PlusIcon className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>

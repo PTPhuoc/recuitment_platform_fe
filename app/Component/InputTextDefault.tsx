@@ -11,7 +11,7 @@ type InputProps = {
   disabled?: boolean;
   placeholder?: string;
   value?: string;
-  lable?: string;
+  label?: string;
   regex?: RegExp;
   outValue: (value: string) => void;
 };
@@ -24,7 +24,7 @@ export default function InputTextDefault({
   disabled = false,
   placeholder,
   value = "",
-  lable,
+  label,
   regex,
   outValue,
 }: InputProps) {
@@ -71,11 +71,11 @@ export default function InputTextDefault({
           }
         >
           <PenLine className="w-5 h-5 max-lg:hidden" />
-          {lable && <p className="flex-1 text-center">{lable}</p>}
+          {label && <p className="flex-1 text-center">{label}</p>}
         </div>
         <input
           value={value}
-          name={lable}
+          name={label}
           type="text"
           disabled={disabled}
           className="px-1 flex-1 outline-none min-w-50"

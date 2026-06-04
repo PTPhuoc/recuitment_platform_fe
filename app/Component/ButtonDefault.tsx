@@ -14,7 +14,7 @@ type ButtonValue = {
   classDisabled?: string;
   classLoad?: string;
   classAll?: string;
-  lable?: string;
+  label?: string;
   offLale?: boolean;
   disabled?: boolean;
   funsHandle?: () => Promise<string> | string;
@@ -26,7 +26,7 @@ export default function ButtonDefault({
   classDisabled,
   classLoad,
   classAll,
-  lable,
+  label,
   offLale = false,
   disabled = false,
   funsHandle,
@@ -100,7 +100,7 @@ export default function ButtonDefault({
               {icon}
             </div>
           )}
-          {lable && (
+          {label && (
             <p
               className={
                 "transition-all duration-200 ease-in-out overflow-hidden text-nowrap " +
@@ -109,7 +109,7 @@ export default function ButtonDefault({
                   : "flex-4 max-w-full opacity-100")
               }
             >
-              {lable}
+              {label}
             </p>
           )}
         </>

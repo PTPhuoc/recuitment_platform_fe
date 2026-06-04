@@ -57,7 +57,7 @@ export default function AdminLeftBar() {
       <div className="flex-1 flex flex-col items-stretch justify-between gap-2 p-2 overflow-auto no-scroll">
         <div className="flex flex-col items-stretch gap-2">
           <ButtonDefault
-            lable={"Bảng điều khiển"}
+            label={"Bảng điều khiển"}
             offLale={adminState.isShrinkBar}
             disabled={pathname === "/dashboard"}
             className={`rounded-md shadow-default border-2 border-light-blue ${pathname === "/dashboard" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -70,7 +70,7 @@ export default function AdminLeftBar() {
             icon={<ChartPie className="h-6 w-6" />}
           />
           <ButtonDefault
-            lable={"Danh sách tài khoản"}
+            label={"Danh sách tài khoản"}
             offLale={adminState.isShrinkBar}
             disabled={pathname === "/list_account"}
             className={`rounded-md shadow-default border-2 border-light-blue ${pathname === "/list_account" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -83,7 +83,7 @@ export default function AdminLeftBar() {
             icon={<BookUser className="h-6 w-6" />}
           />
           <ButtonDefault
-            lable={"Danh sách tuyển dụng"}
+            label={"Danh sách tuyển dụng"}
             offLale={adminState.isShrinkBar}
             disabled={pathname === "/list_job"}
             className={`rounded-md shadow-default border-2 border-light-blue ${pathname === "/list_job" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -96,7 +96,7 @@ export default function AdminLeftBar() {
             icon={<Briefcase className="h-6 w-6" />}
           />
           <ButtonDefault
-            lable={"Danh sách công ty"}
+            label={"Danh sách công ty"}
             offLale={adminState.isShrinkBar}
             disabled={pathname === "/list_company"}
             className={`rounded-md shadow-default border-2 border-light-blue ${pathname === "/list_company" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -134,7 +134,7 @@ export default function AdminLeftBar() {
               className={`flex flex-col gap-1 duration-200 ease-in-out overflow-auto no-scroll ${isOpen ? "max-h-50 p-1" : "max-h-0 p-0"}`}
             >
               <ButtonDefault
-                lable={"Danh sách Nghề nghiệp"}
+                label={"Danh sách Nghề nghiệp"}
                 offLale={adminState.isShrinkBar}
                 disabled={pathname === "/industry"}
                 className={`rounded-md shadow-default border-2 border-dark-blue ${pathname === "/industry" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -147,7 +147,7 @@ export default function AdminLeftBar() {
                 icon={<ToolCase className="h-6 w-6" />}
               />
               <ButtonDefault
-                lable={"Danh sách Cấp bậc"}
+                label={"Danh sách Cấp bậc"}
                 offLale={adminState.isShrinkBar}
                 disabled={pathname === "/job_level"}
                 className={`rounded-md shadow-default border-2 border-dark-blue ${pathname === "/job_level" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -160,7 +160,7 @@ export default function AdminLeftBar() {
                 icon={<BookType className="h-6 w-6" />}
               />
               <ButtonDefault
-                lable={"Danh sách Hình thức"}
+                label={"Danh sách Hình thức"}
                 offLale={adminState.isShrinkBar}
                 disabled={pathname === "/form_of_work"}
                 className={`rounded-md shadow-default border-2 border-dark-blue ${pathname === "/form_of_work" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -173,7 +173,7 @@ export default function AdminLeftBar() {
                 icon={<FileUser className="h-6 w-6" />}
               />
               <ButtonDefault
-                lable={"Danh sách Học vấn"}
+                label={"Danh sách Học vấn"}
                 offLale={adminState.isShrinkBar}
                 disabled={pathname === "/education"}
                 className={`rounded-md shadow-default border-2 border-dark-blue ${pathname === "/education" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -186,7 +186,7 @@ export default function AdminLeftBar() {
                 icon={<GraduationCap className="h-6 w-6" />}
               />
               <ButtonDefault
-                lable={"Danh sách Địa chỉ"}
+                label={"Danh sách Địa chỉ"}
                 offLale={adminState.isShrinkBar}
                 disabled={pathname === "/location"}
                 className={`rounded-md shadow-default border-2 border-dark-blue ${pathname === "/location" ? "bg-dark-blue text-light-blue hover:bg-dark-blue hover:text-light-blue" : " bg-light-blue text-blue-default hover:bg-dark-blue hover:text-light-blue active:shadow-none"}`}
@@ -203,7 +203,7 @@ export default function AdminLeftBar() {
         </div>
         <div className="flex flex-col items-stretch">
           <ButtonDefault
-            lable={"Đăng xuất"}
+            label={"Đăng xuất"}
             offLale={adminState.isShrinkBar}
             disabled={false}
             className={`bg-red-400 rounded-md border-2 border-red-400 shadow-default hover:text-red-400 active:shadow-none`}

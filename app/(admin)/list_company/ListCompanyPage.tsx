@@ -278,7 +278,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
         <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default">
           <div className="flex gap-2 max-md:flex-col">
             <InputTextDefault
-              lable="Tên công ty"
+              label="Tên công ty"
               placeholder="Nhập tên công ty"
               className="flex-5"
               classDisable="flex-5"
@@ -287,7 +287,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               outValue={(value) => setSearch({ ...search, name: value })}
             />
             <ButtonDefault
-              lable="Tìm kiếm"
+              label="Tìm kiếm"
               classAll="flex-1"
               funsHandle={async () => {
                 return await handleGet();
@@ -319,7 +319,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
                     <p>{item.trading_name}</p>
                   </div>
                   <ButtonDefault
-                    lable="Xóa"
+                    label="Xóa"
                     className="bg-red-400 border-red-400 hover:text-red-400"
                     classAll="w-30 max-md:w-15"
                     funsHandle={() => {
@@ -389,7 +389,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               />
             </div>
             <InputTextDefault
-              lable="Tên công ty"
+              label="Tên công ty"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               value={companyInfo.name}
@@ -398,7 +398,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               }
             />
             <InputTextDefault
-              lable="Tên thương mại"
+              label="Tên thương mại"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               value={companyInfo.trading_name}
@@ -407,7 +407,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               }
             />
             <InputTextDefault
-              lable="Địa chỉ website"
+              label="Địa chỉ website"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               placeholder="https://your_website"
@@ -417,7 +417,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               }
             />
             <InputTextDefault
-              lable="Tên domain"
+              label="Tên domain"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               placeholder="your_domain.com"
@@ -427,7 +427,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               }
             />
             <InputTextDefault
-              lable="Quy mô công ty"
+              label="Quy mô công ty"
               classAll="rounded-lg"
               classLabel="rounded-md w-40"
               placeholder="10 - 50"
@@ -462,7 +462,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
             <div className="flex gap-2 items-center">
               <InputCheckDefault
                 value={companyInfo.is_claimed}
-                lable="Đã được nhận"
+                label="Đã được nhận"
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 outValue={(value) =>
@@ -471,7 +471,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               />
               <InputCheckDefault
                 value={companyInfo.is_verified}
-                lable="Đã được xác minh"
+                label="Đã được xác minh"
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 outValue={(value) =>
@@ -492,7 +492,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
             <div className="flex gap-2 items-center justify-end">
               {companyInfo.id && (
                 <ButtonDefault
-                  lable="Hủy"
+                  label="Hủy"
                   className="bg-red-400 border-red-400 hover:text-red-400"
                   classAll="w-50"
                   funsHandle={() => {
@@ -519,7 +519,7 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
                 />
               )}
               <ButtonDefault
-                lable={companyInfo.id ? "Câp nhật" : "Xác nhận"}
+                label={companyInfo.id ? "Câp nhật" : "Xác nhận"}
                 classAll="w-50"
                 funsHandle={async () => {
                   return await handleSave();
