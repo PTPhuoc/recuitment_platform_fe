@@ -95,7 +95,7 @@ export default function ListAccountPage({
         <div className="flex-1 flex flex-col gap-2 p-3 bg-white rounded-2xl shadow-default">
           <div className="flex gap-2 items-center flex-wrap">
             <InputSearch
-              lable="Email"
+              label="Email"
               className="flex-3 w-full rounded-xl"
               outValue={(value) =>
                 setSearchValue({ ...searchValue, email: value })
@@ -103,7 +103,7 @@ export default function ListAccountPage({
             />
             <ButtonDefault
               disabled={false}
-              lable="Tìm kiếm"
+              label="Tìm kiếm"
               className="flex-1 rounded-xl px-2 shadow-default"
               funsHandle={async () => {
                 return await handleSearch(searchValue.email, searchValue.role, searchValue.status, searchValue.dateCreated);
@@ -127,7 +127,8 @@ export default function ListAccountPage({
                 listValue={listRole.vie}
                 attrSearch="name"
                 attrGet="value"
-                lable="Vai trò"
+                label="Vai trò"
+                value={searchValue.role}
                 outValue={(value) =>
                   setSearchValue({ ...searchValue, role: value })
                 }
@@ -137,7 +138,8 @@ export default function ListAccountPage({
                 listValue={listStatus.vie}
                 attrSearch="name"
                 attrGet="value"
-                lable="Trạng thái"
+                value={searchValue.status}
+                label="Trạng thái"
                 outValue={(value) =>
                   setSearchValue({ ...searchValue, status: value })
                 }

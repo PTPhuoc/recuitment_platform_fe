@@ -296,13 +296,13 @@ export default function IndustryPage({
               className="flex-1"
               outValue={(value) => setSearch({ ...search, name: value })}
               value={search.name}
-              lable="Tên"
+              label="Tên"
             />
             <InputTextDefault
               className="flex-1"
               outValue={(value) => setSearch({ ...search, slug: value })}
               value={search.slug}
-              lable="Tên chung"
+              label="Tên chung"
             />
           </div>
           <div className="flex items-stretch gap-3 flex-wrap">
@@ -313,11 +313,11 @@ export default function IndustryPage({
               attrGet="value"
               value={initLang ?? search.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) => setSearch({ ...search, lang: value })}
             />
             <ButtonDefault
-              lable="Tìm kiếm"
+              label="Tìm kiếm"
               funsHandle={async () =>
                 await handleSearch(search.name, search.slug, search.lang)
               }
@@ -369,7 +369,7 @@ export default function IndustryPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Thêm"
+                            label="Thêm"
                             funsHandle={() => {
                               setIndustry({
                                 ...industry,
@@ -381,7 +381,7 @@ export default function IndustryPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={() => {
                               popup({
@@ -433,7 +433,7 @@ export default function IndustryPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Sửa"
+                            label="Sửa"
                             funsHandle={() => {
                               setIndustry({
                                 ...industry,
@@ -447,7 +447,7 @@ export default function IndustryPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={() => {
                               popup({
@@ -514,7 +514,7 @@ export default function IndustryPage({
           <div className="flex-1 flex flex-col gap-3 px-3">
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên chung"
+              label="Tên chung"
               placeholder="Tên chung"
               value={industry.slug}
               outValue={(value) => setIndustry({ ...industry, slug: value })}
@@ -526,14 +526,14 @@ export default function IndustryPage({
               attrGet="value"
               value={industry.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) =>
                 setIndustry({ ...industry, lang: value })
               }
             />
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên"
+              label="Tên"
               placeholder="Tên lĩnh vực"
               value={industry.name}
               outValue={(value) => setIndustry({ ...industry, name: value })}
@@ -543,7 +543,7 @@ export default function IndustryPage({
                 className="flex-1 rounded-xl"
                 classDisabled="flex-1 rounded-xl"
                 classLoad="flex-1 rounded-xl"
-                lable="Lưu Nghề nghiệp"
+                label="Lưu Nghề nghiệp"
                 disabled={
                   !checkField({
                     name: industry.name,
@@ -558,7 +558,7 @@ export default function IndustryPage({
                 <ButtonDefault
                   disabled={false}
                   className="flex-1 rounded-xl bg-red-400 border-red-400 hover:text-red-400"
-                  lable="Hủy cập nhật"
+                  label="Hủy cập nhật"
                   funsHandle={() => {
                     setIndustry({ id: "", name: "", slug: "", lang: lang });
                     return "Success";
@@ -608,7 +608,7 @@ export default function IndustryPage({
                     </div>
                     <ButtonDefault
                       disabled={false}
-                      lable="Sử dụng"
+                      label="Sử dụng"
                       className="rounded-xl"
                       funsHandle={() => {
                         setIndustry({

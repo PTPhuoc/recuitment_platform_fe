@@ -295,13 +295,13 @@ export default function JobLevelPage({
               className="flex-1"
               outValue={(value) => setSearch({ ...search, name: value })}
               value={search.name}
-              lable="Tên"
+              label="Tên"
             />
             <InputTextDefault
               className="flex-1"
               outValue={(value) => setSearch({ ...search, slug: value })}
               value={search.slug}
-              lable="Tên chung"
+              label="Tên chung"
             />
           </div>
           <div className="flex items-stretch gap-3 flex-wrap">
@@ -312,11 +312,11 @@ export default function JobLevelPage({
               attrGet="value"
               value={initLang ?? search.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) => setSearch({ ...search, lang: value })}
             />
             <ButtonDefault
-              lable="Tìm kiếm"
+              label="Tìm kiếm"
               funsHandle={async () =>
                 await handleSearch(search.name, search.slug, search.lang)
               }
@@ -368,7 +368,7 @@ export default function JobLevelPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Thêm"
+                            label="Thêm"
                             funsHandle={() => {
                               setJobLevel({
                                 ...jobLevel,
@@ -380,7 +380,7 @@ export default function JobLevelPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={() => {
                               popup({
@@ -432,7 +432,7 @@ export default function JobLevelPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Sửa"
+                            label="Sửa"
                             funsHandle={() => {
                               setJobLevel({
                                 ...jobLevel,
@@ -446,7 +446,7 @@ export default function JobLevelPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={() => {
                               popup({
@@ -513,7 +513,7 @@ export default function JobLevelPage({
           <div className="flex-1 flex flex-col gap-3 px-3">
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên chung"
+              label="Tên chung"
               placeholder="Tên chung"
               value={jobLevel.slug}
               outValue={(value) => setJobLevel({ ...jobLevel, slug: value })}
@@ -525,14 +525,14 @@ export default function JobLevelPage({
               attrGet="value"
               value={jobLevel.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) =>
                 setJobLevel({ ...jobLevel, lang: value })
               }
             />
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên"
+              label="Tên"
               placeholder="Tên lĩnh vực"
               value={jobLevel.name}
               outValue={(value) => setJobLevel({ ...jobLevel, name: value })}
@@ -542,7 +542,7 @@ export default function JobLevelPage({
                 className="flex-1 rounded-xl"
                 classDisabled="flex-1 rounded-xl"
                 classLoad="flex-1 rounded-xl"
-                lable="Lưu Cấp bậc"
+                label="Lưu Cấp bậc"
                 disabled={
                   !checkField({
                     name: jobLevel.name,
@@ -557,7 +557,7 @@ export default function JobLevelPage({
                 <ButtonDefault
                   disabled={false}
                   className="flex-1 rounded-xl bg-red-400 border-red-400 hover:text-red-400"
-                  lable="Hủy cập nhật"
+                  label="Hủy cập nhật"
                   funsHandle={() => {
                     setJobLevel({ id: "", name: "", slug: "", lang: lang });
                     return "Success";
@@ -607,7 +607,7 @@ export default function JobLevelPage({
                     </div>
                     <ButtonDefault
                       disabled={false}
-                      lable="Sử dụng"
+                      label="Sử dụng"
                       className="rounded-xl"
                       funsHandle={() => {
                         setJobLevel({

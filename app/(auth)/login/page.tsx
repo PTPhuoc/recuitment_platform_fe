@@ -89,7 +89,7 @@ export default function page() {
             <p>Ghi nhớ đăng nhập</p>
           </div>
           <ButtonDefault
-            lable="Xác nhận"
+            label="Xác nhận"
             className="rounded-md w-4/5 max-md:w-[90%] max-sm:w-[95%]"
             classDisabled="rounded-md w-4/5 max-md:w-[90%] max-sm:w-[95%]"
             classLoad="rounded-md w-4/5 max-md:w-[90%] max-sm:w-[95%]"

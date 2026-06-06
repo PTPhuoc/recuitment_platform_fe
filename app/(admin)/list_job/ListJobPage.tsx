@@ -13,7 +13,7 @@ import { useCategories } from "@/app/hook/useCategories";
 import { Relist } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch } from "@/app/store/store";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { ArrowDown, ArrowUp, Plus, PlusIcon, Trash, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -53,18 +53,20 @@ type JobItem = {
   };
 };
 
-type PageValue = {
-  jobs: {
-    count: number | 0;
-    next: string | null;
-    previous: string | null;
-    results: any[];
-    status: "Success";
-  } | null;
+type JobPaginate = {
+  count: number | 0;
+  next: string | null;
+  previous: string | null;
+  results: JobItem[];
+  status: "Success";
+} | null;
+
+type PageProps = {
+  initJob: JobPaginate;
 };
 
 // app/(admin)/list_job/ListJobPage.tsx
-export default function ListJobPage({ jobs }: PageValue) {
+export default function ListJobPage({ initJob }: PageProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { addToast } = useToast();
   const { data: categories, isLoading, error } = useCategories("vie");
@@ -83,6 +85,7 @@ export default function ListJobPage({ jobs }: PageValue) {
     education: [],
     company: [],
   });
+  const [jobPaginate, setJobPaginate] = useState<JobPaginate>(initJob);
   const [jobInfo, setJobInfo] = useState<JobItem>({
     id: "",
     company: "",
@@ -111,36 +114,36 @@ export default function ListJobPage({ jobs }: PageValue) {
   });
 
   const handleWithToast = async (
-      funcFetch: () => Promise<AxiosResponse<any, any, {}>>,
-      funcSuccess: (response: AxiosResponse<any, any, {}>) => void,
-    ) => {
-      try {
-        const response = await funcFetch();
-        if (response.data.status === "Success") {
-          funcSuccess(response);
-          addToast({
-            type: "success",
-            description: "Fetch status: " + response.data.status,
-            title: "Success",
-          });
-          return "Success";
-        } else {
-          addToast({
-            type: "error",
-            description: "Fetch status: " + response.data.status,
-            title: "Error",
-          });
-          return response.data.status;
-        }
-      } catch (error: any) {
+    funcFetch: () => Promise<AxiosResponse<any, any, {}>>,
+    funcSuccess: (response: AxiosResponse<any, any, {}>) => void,
+  ) => {
+    try {
+      const response = await funcFetch();
+      if (response.data.status === "Success") {
+        funcSuccess(response);
         addToast({
-          title: "Lỗi",
-          description: `${error.response.statusText ?? "No response received"}`,
-          type: "error",
+          type: "success",
+          description: "Fetch status: " + response.data.status,
+          title: "Success",
         });
-        return error.response.statusText ?? "No response received";
+        return "Success";
+      } else {
+        addToast({
+          type: "error",
+          description: "Fetch status: " + response.data.status,
+          title: "Error",
+        });
+        return response.data.status;
       }
-    };
+    } catch (error: any) {
+      addToast({
+        title: "Lỗi",
+        description: `${error.response.statusText ?? "No response received"}`,
+        type: "error",
+      });
+      return error.response.statusText ?? "No response received";
+    }
+  };
 
   const handleChangedescriptions = (value: {
     id: string;
@@ -201,9 +204,7 @@ export default function ListJobPage({ jobs }: PageValue) {
     index: number;
   }) => {
     let tempIndex = currentItem.index;
-    let tempObject = jobInfo.descriptions.find(
-      (item) => item.index === tempIndex + 1,
-    );
+    let tempObject = jobInfo.descriptions[tempIndex + 1];
     const newDescriptions = jobInfo.descriptions.map((item, index) => {
       if (index === tempIndex) {
         return tempObject ? { ...tempObject, index: tempIndex } : item;
@@ -228,7 +229,9 @@ export default function ListJobPage({ jobs }: PageValue) {
     }[] = [];
     jobInfo.descriptions.forEach((item) => {
       if (item.index !== index) {
-        newDescriptions.push(item.index > index ? { ...item, index: item.index - 1 } : item);
+        newDescriptions.push(
+          item.index > index ? { ...item, index: item.index - 1 } : item,
+        );
       }
     });
     setJobInfo((prev) => {
@@ -236,18 +239,44 @@ export default function ListJobPage({ jobs }: PageValue) {
     });
   };
 
-  // const handleGet = async () => {
-  //   const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}job/many_search/`)
-  // }
+  const handleGet = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}job/many_search/`,
+      );
+      if (response.data.status === "Success") {
+        setJobPaginate(response.data.jobs);
+      }
+      return response.data.status;
+    } catch (err: any) {
+      console.log(
+        `Error: ${err.response.statusText ?? "No response received"}`,
+      );
+      return err.response.statusText ?? "No response received";
+    }
+  };
 
-  // const handleSave = async () => {
-  //   await handleWithToast(
-  //     async () => await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}job/save/`, jobInfo, { withCredentials: true }),
-  //     async (response) => {
-        
-  //     }
-  //   )
-  // }
+  const handleSave = async () => {
+    const data = {
+      ...jobInfo,
+      description: JSON.stringify(jobInfo.description),
+      descriptions: jobInfo.descriptions.map((item) => ({
+        ...item,
+        description: JSON.stringify(item.description),
+      })),
+    };
+    await handleWithToast(
+      async () =>
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}job/save/`,
+          data,
+          { withCredentials: true },
+        ),
+      async (response) => {
+        await handleGet();
+      },
+    );
+  };
 
   useEffect(() => {
     dispatch(setLoad(false));

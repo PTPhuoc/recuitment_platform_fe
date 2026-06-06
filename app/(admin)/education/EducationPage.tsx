@@ -296,13 +296,13 @@ export default function EducationPage({
               className="flex-1"
               outValue={(value) => setSearch({ ...search, name: value })}
               value={search.name}
-              lable="Tên"
+              label="Tên"
             />
             <InputTextDefault
               className="flex-1"
               outValue={(value) => setSearch({ ...search, slug: value })}
               value={search.slug}
-              lable="Tên chung"
+              label="Tên chung"
             />
           </div>
           <div className="flex items-stretch gap-3 flex-wrap">
@@ -313,11 +313,11 @@ export default function EducationPage({
               attrGet="value"
               value={initLang ?? search.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) => setSearch({ ...search, lang: value })}
             />
             <ButtonDefault
-              lable="Tìm kiếm"
+              label="Tìm kiếm"
               funsHandle={async () =>
                 await handleSearch(search.name, search.slug, search.lang)
               }
@@ -369,7 +369,7 @@ export default function EducationPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Thêm"
+                            label="Thêm"
                             funsHandle={() => {
                               setEducation({
                                 ...education,
@@ -381,7 +381,7 @@ export default function EducationPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={() => {
                               popup({
@@ -433,7 +433,7 @@ export default function EducationPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Sửa"
+                            label="Sửa"
                             funsHandle={() => {
                               setEducation({
                                 ...education,
@@ -447,7 +447,7 @@ export default function EducationPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={() => {
                               popup({
@@ -514,7 +514,7 @@ export default function EducationPage({
           <div className="flex-1 flex flex-col gap-3 px-3">
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên chung"
+              label="Tên chung"
               placeholder="Tên chung"
               value={education.slug}
               outValue={(value) => setEducation({ ...education, slug: value })}
@@ -526,14 +526,14 @@ export default function EducationPage({
               attrGet="value"
               value={education.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) =>
                 setEducation({ ...education, lang: value })
               }
             />
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên"
+              label="Tên"
               placeholder="Tên lĩnh vực"
               value={education.name}
               outValue={(value) => setEducation({ ...education, name: value })}
@@ -543,7 +543,7 @@ export default function EducationPage({
                 className="flex-1 rounded-xl"
                 classDisabled="flex-1 rounded-xl"
                 classLoad="flex-1 rounded-xl"
-                lable="Lưu Học vấn"
+                label="Lưu Học vấn"
                 disabled={
                   !checkField({
                     name: education.name,
@@ -558,7 +558,7 @@ export default function EducationPage({
                 <ButtonDefault
                   disabled={false}
                   className="flex-1 rounded-xl bg-red-400 border-red-400 hover:text-red-400"
-                  lable="Hủy cập nhật"
+                  label="Hủy cập nhật"
                   funsHandle={() => {
                     setEducation({ id: "", name: "", slug: "", lang: lang });
                     return "Success";
@@ -608,7 +608,7 @@ export default function EducationPage({
                     </div>
                     <ButtonDefault
                       disabled={false}
-                      lable="Sử dụng"
+                      label="Sử dụng"
                       className="rounded-xl"
                       funsHandle={() => {
                         setEducation({

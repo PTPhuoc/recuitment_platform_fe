@@ -5,13 +5,13 @@ import { cn } from "../libs/utils";
 import { Search, X } from "lucide-react";
 
 type InputValue = {
-  lable?: string;
+  label?: string;
   className?: string;
   outValue: (value: string) => void;
 };
 
 export default function InputSearch({
-  lable,
+  label,
   className,
   outValue,
 }: InputValue) {
@@ -33,7 +33,7 @@ export default function InputSearch({
     >
       <div className="flex items-center gap-2 px-2 rounded-xl bg-light-blue text-blue-default font-bold">
         <Search className="h-5 w-5" />
-        {lable && <p>{lable}</p>}
+        {label && <p>{label}</p>}
       </div>
 
       <input
