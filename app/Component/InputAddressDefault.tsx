@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { cn, handleSearch } from "../libs/utils";
 import { MapPin, X } from "lucide-react";
 
@@ -17,7 +17,6 @@ type InputAddressProps = {
   outValue: (value: string) => void;
 };
 
-// app/Component/InputAddressDefault.tsx
 export default function InputAddressDefault({
   className,
   classAll,
@@ -36,6 +35,8 @@ export default function InputAddressDefault({
   >([]);
   const [isFocus, setIsFocus] = useState(false);
 
+  const currentValueRef = useRef<string | undefined>(value);
+
   const parentMap = useMemo(() => {
     const map = new Map<string, { name: string; parent_id: string }>();
     listSearch.forEach((item) =>
@@ -45,7 +46,7 @@ export default function InputAddressDefault({
   }, [listSearch]);
 
   const findParent = (parentId: string) => {
-    let list = [];
+    const list = [];
     let currentId = parentId;
     while (currentId && parentMap.has(currentId)) {
       const item = parentMap.get(currentId)!;
@@ -56,7 +57,59 @@ export default function InputAddressDefault({
   };
 
   useEffect(() => {
-    const time = setTimeout(() => {
+    if (value !== currentValueRef.current) {
+      currentValueRef.current = value;
+      if (value) {
+        const listParent = findParent(value);
+        const name =
+          listParent.length > 0
+            ? listParent.join(", ")
+            : listSearch.find((item) => item.value === value)?.name || "";
+        setInputValue(name);
+      } else {
+        setInputValue("");
+      }
+    }
+  }, [value, listSearch, findParent]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleBlur = () => {
+    setIsFocus(false);
+    const trimmed = inputValue.trim();
+    if (trimmed) {
+      const matched = listSearch.find(
+        (item) => item.name.toLowerCase() === trimmed.toLowerCase(),
+      );
+      if (matched) {
+        outValue(matched.value);
+        currentValueRef.current = matched.value;
+      } else {
+        outValue("");
+        currentValueRef.current = "";
+      }
+    } else {
+      outValue("");
+      currentValueRef.current = "";
+    }
+  };
+
+  const handleSelect = (item: {
+    name: string;
+    subName: string;
+    value: string;
+  }) => {
+    const fullName = item.name + (item.subName ? ", " + item.subName : "");
+    setInputValue(fullName);
+    outValue(item.value);
+    currentValueRef.current = item.value;
+    setIsFocus(false);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
       if (inputValue) {
         const firstValue = inputValue.split(", ")[0];
         const search = handleSearch({
@@ -65,21 +118,20 @@ export default function InputAddressDefault({
           value: firstValue,
         });
         if (search.length > 0) {
-          const addSubName = search.map((item) => {
-            return {
-              name: item.name,
-              subName: findParent(item.parent_id)?.join(", ") || "",
-              value: item.value,
-            };
-          });
+          const addSubName = search.map((item) => ({
+            name: item.name,
+            subName: findParent(item.parent_id)?.join(", ") || "",
+            value: item.value,
+          }));
           setListSuggest(addSubName);
+        } else {
+          setListSuggest([]);
         }
-      }else {
+      } else {
         setListSuggest([]);
-        outValue("")
       }
     }, 300);
-    return () => clearTimeout(time);
+    return () => clearTimeout(timer);
   }, [inputValue, listSearch]);
 
   return (
@@ -102,7 +154,11 @@ export default function InputAddressDefault({
         <div className="flex-1 flex gap-1 flex-wrap">
           <div
             className={cn(
-              `flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${disabled ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}`,
+              `flex w-30 items-center gap-2 px-2 rounded-xl font-bold shrink-0 ${
+                disabled
+                  ? "bg-zinc-300 text-white"
+                  : "bg-light-blue text-blue-default"
+              }`,
               classLabel,
               classAll,
             )}
@@ -117,9 +173,9 @@ export default function InputAddressDefault({
             disabled={disabled}
             className="px-1 flex-1 outline-none min-w-50"
             placeholder={placeholder}
-            onChange={(e) => setInputValue(e.target.value)}
-            onClick={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
+            onChange={handleInputChange}
+            onFocus={() => setIsFocus(true)}
+            onBlur={handleBlur}
           />
         </div>
         <div className="flex h-full items-end">
@@ -131,6 +187,7 @@ export default function InputAddressDefault({
             onClick={() => {
               setInputValue("");
               outValue("");
+              currentValueRef.current = "";
             }}
           >
             <X className="h-5 w-5" />
@@ -138,7 +195,9 @@ export default function InputAddressDefault({
         </div>
         <div
           className={cn(
-            `absolute w-full top-full left-0 mt-1 flex flex-col bg-zinc-200 rounded-xl border-2 border-blue-default gap-px overflow-auto no-scroll ${isFocus ? "max-h-25 opacity-100" : "max-h-0 opacity-0"} duration-200 ease-in-out group-hover:max-h-25 group-hover:opacity-100`,
+            `absolute w-full top-full left-0 mt-1 flex flex-col bg-zinc-200 rounded-xl border-2 border-blue-default gap-px overflow-auto no-scroll ${
+              isFocus ? "max-h-25 opacity-100" : "max-h-0 opacity-0"
+            } duration-200 ease-in-out group-hover:max-h-25 group-hover:opacity-100`,
           )}
         >
           {!disabled && inputValue && listSuggest && listSuggest.length > 0 ? (
@@ -146,13 +205,7 @@ export default function InputAddressDefault({
               <button
                 key={index}
                 className="flex flex-col items-start p-1 bg-white duration-200 ease-in hover:bg-blue-default hover:text-light-blue"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setInputValue(
-                    item.name + (item.subName ? ", " + item.subName : ""),
-                  );
-                  outValue(item.value);
-                }}
+                onClick={() => handleSelect(item)}
               >
                 <p className="font-bold">{item.name}</p>
                 <p>{item.subName}</p>

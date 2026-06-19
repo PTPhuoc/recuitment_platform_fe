@@ -10,9 +10,9 @@ type PageProps = {
   classDisable?: string;
   className?: string;
   classLabel?: string;
-  label?: string
+  label?: string;
   disabled?: boolean;
-  dateValue?: Date | "";
+  dateValue?: Date | string | "";
   maxCurrentYear?: boolean;
   outValue: (value: Date | "") => void;
 };
@@ -33,27 +33,7 @@ export default function DatePicker({
     date: number | "";
     month: number | "";
     year: number | "";
-  }>(
-    (() => {
-      if (dateValue) {
-        return {
-          date: dateValue.getDate(),
-          month: dateValue.getMonth() + 1,
-          year: dateValue.getFullYear(),
-        };
-      } else {
-        return {
-          date: "",
-          month: "",
-          year: "",
-        };
-      }
-    })(),
-  );
-  const [isDate, setIsDate] = useState({
-    match: true,
-    message: "",
-  });
+  }>({ date: "", month: "", year: "" });
   const [selected, setSelected] = useState<Date>();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -83,15 +63,6 @@ export default function DatePicker({
     return number;
   };
 
-  const termValueYear = (value: string) => {
-    if (value === "") return "";
-    const number = Number(value);
-    const currentYear = currentDate.getFullYear();
-    if (maxCurrentYear && number > currentYear) return currentYear;
-    if (number > currentYear + 50) return currentYear + 50;
-    return number;
-  };
-
   const handleDateSelect = (value: Date | undefined) => {
     if (value) {
       setInputValue({
@@ -105,37 +76,77 @@ export default function DatePicker({
   };
 
   useEffect(() => {
-    if (inputValue.date && inputValue.month && inputValue.year) {
-      const matchDate = new Date(
-        inputValue.year,
-        inputValue.month - 1,
-        inputValue.date,
-      );
-      if (inputValue.date !== matchDate.getDate()) {
-        const dateInMonth = new Date(
-          inputValue.year,
-          inputValue.month,
-          0,
-        ).getDate();
-        setIsDate({
-          match: false,
-          message: `Tháng ${inputValue.month} chỉ có ${dateInMonth} ngày`,
-        });
-        outValue("");
-      } else {
-        setIsDate({ match: true, message: "" });
+    if (dateValue && dateValue !== "") {
+      const converDate = new Date(dateValue);
+      setInputValue({
+        date: converDate.getDate(),
+        month: converDate.getMonth() + 1,
+        year: converDate.getFullYear(),
+      });
+      setSelected(converDate);
+    } else {
+      setInputValue({
+        date: "",
+        month: "",
+        year: "",
+      });
+      setSelected(undefined);
+    }
+  }, [dateValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.replace(/[^0-9]/g, "");
+    setInputValue({ ...inputValue, [e.target.name]: newValue });
+  };
+
+  const handleOutValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    if (e.target.name === "date") {
+      const matchDate = mathValueDate(value);
+      setInputValue({ ...inputValue, date: matchDate });
+      if (inputValue.month && inputValue.year && matchDate) {
         const newDate = new Date(
           inputValue.year,
+          inputValue.month - 1,
+          matchDate,
+        );
+        setSelected(newDate);
+        outValue(newDate);
+      } else {
+        outValue("");
+      }
+    }
+    if (e.target.name === "month") {
+      const matchMonth = mathValueMonth(value);
+      setInputValue({ ...inputValue, month: matchMonth });
+      if (inputValue.date && inputValue.year && matchMonth) {
+        const newDate = new Date(
+          inputValue.year,
+          matchMonth - 1,
+          inputValue.date,
+        );
+        setSelected(newDate);
+        outValue(newDate);
+      } else {
+        outValue("");
+      }
+    }
+    if (e.target.name === "year") {
+      const matchYear = mathValueYear(value);
+      setInputValue({ ...inputValue, year: matchYear });
+      if (inputValue.date && inputValue.month && matchYear) {
+        const newDate = new Date(
+          matchYear,
           inputValue.month - 1,
           inputValue.date,
         );
         setSelected(newDate);
         outValue(newDate);
+      } else {
+        outValue("");
       }
-    } else {
-      outValue("");
     }
-  }, [inputValue]);
+  };
 
   return (
     <div
@@ -153,16 +164,12 @@ export default function DatePicker({
             )
       }
     >
-      <p
-        className={`absolute z-1 left-0 px-1 mb-1 rounded-sm w-full text-white bg-red-400 transition-all duration-200 ease-in-out ${isDate.match ? "bottom-0" : "bottom-full"}`}
-      >
-        {isDate.message}
-      </p>
       <div className="flex-1 flex gap-2 items-stretch z-2">
         <div
           className={cn(
             `flex items-center gap-2 px-2 rounded-xl ${disabled ? "bg-zinc-300 text-white" : "bg-light-blue text-blue-default"}  font-bold`,
-            classLabel,classAll,
+            classLabel,
+            classAll,
           )}
         >
           <CalendarDays className="h-5 w-5" />
@@ -171,53 +178,48 @@ export default function DatePicker({
         <div className="flex items-center gap-1">
           <input
             type="text"
+            name="date"
             inputMode="numeric"
             disabled={disabled}
             value={inputValue.date}
             placeholder="dd"
             className="w-7 outline-none text-center"
             onFocus={() => setIsOpen(true)}
-            onBlur={() => setIsOpen(false)}
-            onChange={(e) => {
-              let val = e.target.value;
-              val = val.replace(/[^0-9]/g, "");
-              setInputValue({ ...inputValue, date: mathValueDate(val) });
+            onBlur={(e) => {
+              handleOutValue(e);
+              setIsOpen(false);
             }}
+            onChange={(e) => handleChange(e)}
           />
           <p>/</p>
           <input
             type="text"
+            name="month"
             inputMode="numeric"
             disabled={disabled}
             value={inputValue.month}
             placeholder="MM"
             className="w-7 outline-none text-center"
             onFocus={() => setIsOpen(true)}
-            onBlur={() => setIsOpen(false)}
-            onChange={(e) => {
-              let val = e.target.value;
-              val = val.replace(/[^0-9]/g, "");
-              setInputValue({ ...inputValue, month: mathValueMonth(val) });
+            onBlur={(e) => {
+              handleOutValue(e);
+              setIsOpen(false);
             }}
+            onChange={(e) => handleChange(e)}
           />
           <p>/</p>
           <input
             type="text"
+            name="year"
             inputMode="numeric"
             disabled={disabled}
             value={inputValue.year}
             placeholder="yyyy"
             className="w-10 outline-none text-center"
             onFocus={() => setIsOpen(true)}
-            onChange={(e) => {
-              let val = e.target.value;
-              val = val.replace(/[^0-9]/g, "");
-              setInputValue({ ...inputValue, year: termValueYear(val) });
-            }}
+            onChange={(e) => handleChange(e)}
             onBlur={(e) => {
-              let val = e.target.value;
-              val = val.replace(/[^0-9]/g, "");
-              setInputValue({ ...inputValue, year: mathValueYear(val) });
+              handleOutValue(e);
               setIsOpen(false);
             }}
           />

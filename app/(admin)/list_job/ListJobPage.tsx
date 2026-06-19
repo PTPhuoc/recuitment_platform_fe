@@ -31,7 +31,7 @@ type JobItem = {
   source_link: string;
   description: Record<string, any>;
   status: "pending" | "active" | "ban" | string;
-  date_limited: Date | "";
+  date_limited: Date | string | "";
   descriptions: {
     id: string;
     job: string;
@@ -265,7 +265,7 @@ export default function ListJobPage({ initJob }: PageProps) {
         description: JSON.stringify(item.description),
       })),
     };
-    await handleWithToast(
+    return await handleWithToast(
       async () =>
         await axios.post(
           `${process.env.NEXT_PUBLIC_SERVER_URL}job/save/`,
@@ -273,6 +273,32 @@ export default function ListJobPage({ initJob }: PageProps) {
           { withCredentials: true },
         ),
       async (response) => {
+        setJobInfo({
+          id: "",
+          company: "",
+          name: "",
+          source_link: "",
+          description: {},
+          status: "active",
+          date_limited: "",
+          descriptions: [],
+          require: {
+            id: "",
+            job: "",
+            location: "",
+            form_of_work: [],
+            educations: [],
+            industries: [],
+            min_salary: 0,
+            max_salary: 0,
+            min_experience: 0,
+            max_experience: 0,
+          },
+        });
+        setIsOpen({
+          ...isOpen,
+          create: false,
+        });
         await handleGet();
       },
     );
@@ -329,7 +355,9 @@ export default function ListJobPage({ initJob }: PageProps) {
             <Plus className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default"></div>
+        <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default">
+          
+        </div>
         <div
           className={`fixed top-0 left-0 z-2 flex w-full h-full justify-end duration-500 ease-in-out ${isOpen.create ? "translate-x-0" : "translate-x-full"}`}
           onClick={(e) => {
@@ -389,6 +417,7 @@ export default function ListJobPage({ initJob }: PageProps) {
                 value={jobInfo.status}
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
+                className="z-7"
                 listValue={listStatus}
                 outValue={(value) => setJobInfo({ ...jobInfo, status: value })}
               />
@@ -396,6 +425,7 @@ export default function ListJobPage({ initJob }: PageProps) {
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 label="Ngày hết hạn"
+                className="z-6"
                 dateValue={jobInfo.date_limited}
                 outValue={(value) =>
                   setJobInfo({ ...jobInfo, date_limited: value })
@@ -407,7 +437,7 @@ export default function ListJobPage({ initJob }: PageProps) {
               </div>
               <InputAddressDefault
                 classAll="rounded-lg"
-                className="z-4"
+                className="z-5"
                 classLabel="rounded-md w-40"
                 label="Địa điểm"
                 listSearch={category.location}
@@ -421,7 +451,7 @@ export default function ListJobPage({ initJob }: PageProps) {
               />
               <InputSelectDefault
                 classAll="rounded-lg"
-                className="z-3"
+                className="z-4"
                 classLabel="rounded-md w-40"
                 label="Hình thức làm việc"
                 listSearch={category.formOfWork}
@@ -435,7 +465,7 @@ export default function ListJobPage({ initJob }: PageProps) {
               />
               <InputSelectDefault
                 classAll="rounded-lg"
-                className="z-2"
+                className="z-3"
                 classLabel="rounded-md w-40"
                 label="Học vấn"
                 listSearch={category.education}
@@ -449,7 +479,7 @@ export default function ListJobPage({ initJob }: PageProps) {
               />
               <InputSelectDefault
                 classAll="rounded-lg"
-                className="z-1"
+                className="z-2"
                 classLabel="rounded-md w-40"
                 label="Ngành nghề"
                 listSearch={category.industry}
@@ -608,6 +638,20 @@ export default function ListJobPage({ initJob }: PageProps) {
               >
                 <PlusIcon className="w-5 h-5" />
               </button>
+              <div className="flex gap-2 items-center">
+                {jobInfo.id && (
+                  <button className="flex-1 rounded-lg bg-red-400 border-2 border-red-400 text-white duration-200 ease-in hover:bg-white hover:text-red-400">
+                    Hủy
+                  </button>
+                )}
+                <ButtonDefault
+                  label="Lưu"
+                  classAll="flex-1 rounded-lg"
+                  funsHandle={async () => {
+                    return await handleSave();
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
