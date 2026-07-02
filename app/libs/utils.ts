@@ -80,11 +80,7 @@ export const percent = ({ max, current }: PercentValue) => {
   return divine * 100;
 };
 
-type DateValue = {
-  value: string | null;
-};
-
-export const getStringDate = ({ value }: DateValue) => {
+export const getStringDate = (value : string | Date) => {
   const currentDate = value ? new Date(value) : new Date();
   const date = String(currentDate.getDate()).padStart(2, "0");
   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -94,7 +90,7 @@ export const getStringDate = ({ value }: DateValue) => {
 type SearchValue = {
   value: string | null;
   listSearch: any[] | null;
-  attrSearch: string;
+  attrSearch: string | number | symbol;
 };
 
 export const handleSearch = ({
@@ -249,3 +245,13 @@ export const trimAllField = (obj: Record<string, any>) => {
   }
   return obj;
 }
+
+const validStatuses = ["pending", "active", "ban"] as const;
+type Status = typeof validStatuses[number] | "";
+
+export const validateStatus = (status: string | undefined): Status => {
+  if (status && validStatuses.includes(status as any)) {
+    return status as Status;
+  }
+  return "";
+};

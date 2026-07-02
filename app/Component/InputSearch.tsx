@@ -35,7 +35,6 @@ export default function InputSearch({
         <Search className="h-5 w-5" />
         {label && <p>{label}</p>}
       </div>
-
       <input
         className="w-full outline-none"
         type="text"

@@ -1,37 +1,49 @@
 "use client";
 
 import ButtonDefault from "@/app/Component/ButtonDefault";
+import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
 import DatePicker from "@/app/Component/DateSearch";
+import ImageShow from "@/app/Component/ImageShow";
 import InputAddressDefault from "@/app/Component/InputAddressDefault";
 import InputNumberDefault from "@/app/Component/InputNumberDefault";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import InputTextEditer from "@/app/Component/InputTextEditer";
 import ListSearch from "@/app/Component/ListSearch";
+import { usePopup } from "@/app/Component/Popup";
+import { getNameStatus, getStatus } from "@/app/constants/job/status";
 import { useToast } from "@/app/hook/ToastContext";
 import { useCategories } from "@/app/hook/useCategories";
-import { Relist } from "@/app/libs/utils";
+import { getStringDate, Relist } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
-import { AppDispatch } from "@/app/store/store";
+import { AppDispatch, RootState } from "@/app/store/store";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { ArrowDown, ArrowUp, Plus, PlusIcon, Trash, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  PackageOpen,
+  Plus,
+  PlusIcon,
+  Trash,
+  X,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-
-const listStatus = [
-  { id: "pending", name: "Pending" },
-  { id: "active", name: "Active" },
-  { id: "ban", name: "Ban" },
-];
+import { useDispatch, useSelector } from "react-redux";
 
 type JobItem = {
   id: string;
-  company: string;
+  company: {
+    id: string;
+    name: string;
+    image: string;
+  };
   name: string;
   source_link: string;
   description: Record<string, any>;
   status: "pending" | "active" | "ban" | string;
   date_limited: Date | string | "";
+  date_created: Date | string | "";
   descriptions: {
     id: string;
     job: string;
@@ -53,22 +65,67 @@ type JobItem = {
   };
 };
 
-type JobPaginate = {
+type JobItemGet = {
+  id: string;
+  company: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  name: string;
+  source_link: string;
+  description: Record<string, any>;
+  status: "pending" | "active" | "ban" | string;
+  date_limited: Date | string | "";
+  date_created: Date | string | "";
+  descriptions: {
+    id: string;
+    job: string;
+    title: string;
+    description: string;
+    index: number;
+  }[];
+  require: {
+    id: string;
+    job: string;
+    location: string;
+    form_of_work: string[];
+    educations: string[];
+    industries: string[];
+    min_salary: number;
+    max_salary: number;
+    min_experience: number;
+    max_experience: number;
+  };
+};
+
+type Paginate = {
+  page: number;
+  total_page: number;
   count: number | 0;
   next: string | null;
   previous: string | null;
-  results: JobItem[];
+  results: JobItemGet[];
   status: "Success";
 } | null;
 
 type PageProps = {
-  initJob: JobPaginate;
+  initJob: Paginate;
+  nameJob?: string;
+  statusJob?: "pending" | "active" | "ban" | "";
 };
 
 // app/(admin)/list_job/ListJobPage.tsx
-export default function ListJobPage({ initJob }: PageProps) {
+export default function ListJobPage({
+  initJob,
+  nameJob,
+  statusJob,
+}: PageProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { lang } = useSelector((state: RootState) => state.web);
   const { addToast } = useToast();
+  const popup = usePopup();
+  const router = useRouter();
   const { data: categories, isLoading, error } = useCategories("vie");
   const [category, setCategory] = useState<{
     industry: { name: string; value: string }[];
@@ -85,15 +142,20 @@ export default function ListJobPage({ initJob }: PageProps) {
     education: [],
     company: [],
   });
-  const [jobPaginate, setJobPaginate] = useState<JobPaginate>(initJob);
+  const [paginate, setPaginate] = useState<Paginate>(initJob);
   const [jobInfo, setJobInfo] = useState<JobItem>({
     id: "",
-    company: "",
+    company: {
+      id: "",
+      name: "",
+      image: "",
+    },
     name: "",
     source_link: "",
     description: {},
     status: "active",
     date_limited: "",
+    date_created: "",
     descriptions: [],
     require: {
       id: "",
@@ -110,7 +172,14 @@ export default function ListJobPage({ initJob }: PageProps) {
   });
   const [isOpen, setIsOpen] = useState({
     advance: false,
-    create: true,
+    create: false,
+  });
+  const [jobSearch, setJobSearch] = useState<{
+    name: string;
+    status: "" | "pending" | "active" | "ban";
+  }>({
+    name: nameJob || "",
+    status: statusJob || "",
   });
 
   const handleWithToast = async (
@@ -219,7 +288,7 @@ export default function ListJobPage({ initJob }: PageProps) {
     });
   };
 
-  const handleDelete = (index: number) => {
+  const handleDeleteDecriptions = (index: number) => {
     const newDescriptions: {
       id: string;
       job: string;
@@ -239,13 +308,24 @@ export default function ListJobPage({ initJob }: PageProps) {
     });
   };
 
-  const handleGet = async () => {
+  const handleGet = async (
+    name: string,
+    companyName: string,
+    status: "pending" | "active" | "ban" | "",
+    page: string,
+  ) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}job/many_search/`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}job/many_search/?name=${name}&company=${companyName}&status=${status}`,
       );
       if (response.data.status === "Success") {
-        setJobPaginate(response.data.jobs);
+        router.push(
+          `/list_job?name=${name}&company=${companyName}&status=${status}&page=${page}`,
+          {
+            scroll: false,
+          },
+        );
+        setPaginate(response.data);
       }
       return response.data.status;
     } catch (err: any) {
@@ -273,35 +353,86 @@ export default function ListJobPage({ initJob }: PageProps) {
           { withCredentials: true },
         ),
       async (response) => {
-        setJobInfo({
-          id: "",
-          company: "",
-          name: "",
-          source_link: "",
-          description: {},
-          status: "active",
-          date_limited: "",
-          descriptions: [],
-          require: {
-            id: "",
-            job: "",
-            location: "",
-            form_of_work: [],
-            educations: [],
-            industries: [],
-            min_salary: 0,
-            max_salary: 0,
-            min_experience: 0,
-            max_experience: 0,
-          },
-        });
-        setIsOpen({
-          ...isOpen,
-          create: false,
-        });
-        await handleGet();
+        if (paginate && paginate.page === 1) {
+          if (jobInfo.id) {
+            const rewriteJob = paginate.results.map((item) =>
+              item.id === jobInfo.id ? response.data.job : item,
+            );
+            setPaginate({ ...paginate, results: rewriteJob });
+          } else {
+            setPaginate({
+              ...paginate,
+              results: [response.data.job, ...paginate.results],
+            });
+          }
+        }
+        resetState();
       },
     );
+  };
+
+  const handleDeleteJob = (id: string) => {
+    return handleWithToast(
+      async () =>
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}job/item/?id=${id}`,
+          { withCredentials: true },
+        ),
+      async (response) => {
+        if (paginate) {
+          setPaginate({
+            ...paginate,
+            results: paginate.results.filter((item) => item.id !== id),
+          });
+        }
+      },
+    );
+  };
+
+  const handleChangePage = async (url: string | null) => {
+    if (!url) return "No Url";
+    return handleWithToast(
+      async () => await axios.get(url),
+      async (response) => {
+        if (response.data.status === "Success") {
+          setPaginate(response.data);
+        }
+      },
+    );
+  };
+
+  const resetState = () => {
+    setJobInfo({
+      id: "",
+      company: {
+        id: "",
+        name: "",
+        image: "",
+      },
+      name: "",
+      source_link: "",
+      description: {},
+      status: "active",
+      date_limited: "",
+      date_created: "",
+      descriptions: [],
+      require: {
+        id: "",
+        job: "",
+        location: "",
+        form_of_work: [],
+        educations: [],
+        industries: [],
+        min_salary: 0,
+        max_salary: 0,
+        min_experience: 0,
+        max_experience: 0,
+      },
+    });
+    setIsOpen({
+      create: false,
+      advance: false,
+    });
   };
 
   useEffect(() => {
@@ -340,12 +471,12 @@ export default function ListJobPage({ initJob }: PageProps) {
   }, [isLoading, error, categories]);
 
   useEffect(() => {
-    console.log(jobInfo);
-  }, [jobInfo]);
+    console.log(paginate);
+  }, [paginate]);
 
   return (
     <>
-      <div className="flex flex-col w-3/4 max-lg:w-[95%] max-sm:w-full h-full gap-3 max-lg:gap-2 py-3 max-lg:py-2 items-stretch overflow-auto no-scroll">
+      <div className="flex z-1 flex-col w-3/4 max-lg:w-[95%] max-sm:w-full min-w-0 h-screen gap-3 max-lg:gap-2 py-3 max-lg:py-2 items-stretch overflow-auto no-scroll">
         <div className="flex justify-between items-center p-3 bg-blue-default sm:rounded-2xl shadow-default">
           <p className="font-bold text-light-blue">Danh sách Tuyển dụng</p>
           <button
@@ -356,7 +487,115 @@ export default function ListJobPage({ initJob }: PageProps) {
           </button>
         </div>
         <div className="flex-1 flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-default">
-          
+          <div className="flex gap-2 max-lg:flex-col">
+            <InputTextDefault
+              value={jobSearch.name}
+              classAll="rounded-lg"
+              label="Tên tuyển dụng"
+              classLabel="w-40"
+              className="flex-1"
+              classDisable="flex-1"
+              outValue={(value) => setJobSearch({ ...jobSearch, name: value })}
+            />
+            <ListSearch
+              label="Trạng thái"
+              classAll="rounded-lg"
+              value={jobSearch.status}
+              listValue={getStatus(lang)}
+              attrSearch="name"
+              attrGet="value"
+              outValue={(value) =>
+                setJobSearch({ ...jobSearch, status: value })
+              }
+            />
+            <ButtonDefault
+              label="Tìm kiếm"
+              funsHandle={async () => {
+                return handleGet(
+                  jobSearch.name,
+                  jobSearch.name,
+                  jobSearch.status,
+                  "1",
+                );
+              }}
+            />
+          </div>
+          <div className="flex-1 p-2 flex flex-col gap-2 border-2 border-blue-default rounded-xl min-w-0 overflow-auto no-scroll">
+            {paginate && paginate.results?.length > 0 ? (
+              paginate.results.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex p-2 gap-2 items-end rounded-lg border-2 border-light-blue shadow-default duration-200 ease-in hover:border-dark-blue active:shadow-none cursor-pointer"
+                  onClick={() => {
+                    const descriptions = item.descriptions.map((desc) => {
+                      return {
+                        ...desc,
+                        description: JSON.parse(desc.description),
+                      };
+                    });
+                    setJobInfo({
+                      ...item,
+                      descriptions: descriptions.sort(
+                        (a, b) => a.index - b.index,
+                      ),
+                    });
+                    setIsOpen({ ...isOpen, create: true });
+                  }}
+                >
+                  <ImageShow
+                    link={item.company.image}
+                    alt={item.name}
+                    typeShape="fixed"
+                    classImage="object-contain"
+                    className="rounded-lg max-w-30 max-sm:max-w-20 max-[400px]:hidden"
+                  />
+                  <div className="flex-1 flex flex-col min-w-0">
+                    <p className="font-bold text-[30px] truncate">
+                      {item.name}
+                    </p>
+                    <p className="truncate font-bold text-zinc-500">
+                      {item.company.name}
+                    </p>
+                    <p>Ngày tạo: {getStringDate(item.date_created)}</p>
+                    <p>Trạng thái: {getNameStatus(item.status, lang)}</p>
+                  </div>
+                  <ButtonDefault
+                    label="Xóa"
+                    className="bg-red-400 border-red-400 hover:text-red-400"
+                    classAll="w-30 max-md:w-15"
+                    funsHandle={() => {
+                      popup({
+                        isOpen: true,
+                        message: `Bạn có chắc muốn xóa Tuyển dụng: ${item.name}`,
+                        title: "Xóa Tuyển dụng",
+                        typeSubmit: "YrN",
+                        handleFuns: () => handleDeleteJob(item.id),
+                      });
+                      return "Success";
+                    }}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="flex-1 flex flex-col justify-center items-center">
+                <PackageOpen className="h-20 w-20 text-zinc-400" />
+                <p className="font-bold text-zinc-400">
+                  Không tìm thấy Tuyển dụng nào
+                </p>
+              </div>
+            )}
+          </div>
+          <ChangeNumberPage
+            next={paginate?.next ?? null}
+            previous={paginate?.previous ?? null}
+            pageNumber={paginate?.page}
+            onNextPage={async () =>
+              await handleChangePage(paginate?.next ?? null)
+            }
+            onPreviousPage={async () =>
+              await handleChangePage(paginate?.previous ?? null)
+            }
+          />
         </div>
         <div
           className={`fixed top-0 left-0 z-2 flex w-full h-full justify-end duration-500 ease-in-out ${isOpen.create ? "translate-x-0" : "translate-x-full"}`}
@@ -397,8 +636,13 @@ export default function ListJobPage({ initJob }: PageProps) {
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 listValue={category.company}
-                outValue={(value) => setJobInfo({ ...jobInfo, company: value })}
-                value={jobInfo.company}
+                outValue={(value) =>
+                  setJobInfo({
+                    ...jobInfo,
+                    company: { ...jobInfo.company, id: value },
+                  })
+                }
+                value={jobInfo.company.id}
               />
               <InputTextDefault
                 label="Đường dẩn nguồn"
@@ -411,14 +655,14 @@ export default function ListJobPage({ initJob }: PageProps) {
                 placeholder="https://name_website/"
               />
               <ListSearch
-                attrGet="id"
+                attrGet="value"
                 attrSearch="name"
                 label="Trạng thái"
                 value={jobInfo.status}
                 classAll="rounded-lg"
                 classLabel="rounded-md w-40"
                 className="z-7"
-                listValue={listStatus}
+                listValue={getStatus(lang)}
                 outValue={(value) => setJobInfo({ ...jobInfo, status: value })}
               />
               <DatePicker
@@ -440,6 +684,7 @@ export default function ListJobPage({ initJob }: PageProps) {
                 className="z-5"
                 classLabel="rounded-md w-40"
                 label="Địa điểm"
+                placeholder="Nhập địa điểm"
                 listSearch={category.location}
                 value={jobInfo.require.location}
                 outValue={(value) =>
@@ -454,6 +699,7 @@ export default function ListJobPage({ initJob }: PageProps) {
                 className="z-4"
                 classLabel="rounded-md w-40"
                 label="Hình thức làm việc"
+                placeholder="Nhập hình thức làm việc"
                 listSearch={category.formOfWork}
                 value={jobInfo.require.form_of_work}
                 outValue={(value) =>
@@ -468,6 +714,7 @@ export default function ListJobPage({ initJob }: PageProps) {
                 className="z-3"
                 classLabel="rounded-md w-40"
                 label="Học vấn"
+                placeholder="Nhập học vấn"
                 listSearch={category.education}
                 value={jobInfo.require.educations}
                 outValue={(value) =>
@@ -482,6 +729,7 @@ export default function ListJobPage({ initJob }: PageProps) {
                 className="z-2"
                 classLabel="rounded-md w-40"
                 label="Ngành nghề"
+                placeholder="Nhập ngành nghề"
                 listSearch={category.industry}
                 value={jobInfo.require.industries}
                 outValue={(value) =>
@@ -580,25 +828,28 @@ export default function ListJobPage({ initJob }: PageProps) {
                           })
                         }
                       />
-                      <button
-                        className={`flex items-center justify-center p-2 rounded-lg bg-white border-2 ${item.index === 0 ? "border-zinc-400 text-zinc-400 cursor-not-allowed" : "border-blue-default text-blue-default hover:bg-blue-default hover:text-white cursor-pointer"} duration-200 ease-in`}
-                        disabled={item.index === 0}
-                        onClick={() => handleMoveUp({ ...item })}
-                      >
-                        <ArrowUp className="w-5 h-5" />
-                      </button>
-                      <button
-                        className={`flex items-center justify-center p-2 rounded-lg bg-white border-2 ${item.index === jobInfo.descriptions.length - 1 ? "border-zinc-400 text-zinc-400 cursor-not-allowed" : "border-blue-default text-blue-default hover:bg-blue-default hover:text-white cursor-pointer"} duration-200 ease-in`}
-                        disabled={
-                          item.index === jobInfo.descriptions.length - 1
-                        }
-                        onClick={() => handleMoveDown({ ...item })}
-                      >
-                        <ArrowDown className="w-5 h-5" />
-                      </button>
+                      <div className="flex max-[450px]:flex-col gap-2">
+                        <button
+                          className={`flex items-center justify-center p-2 rounded-lg bg-white border-2 ${item.index === 0 ? "border-zinc-400 text-zinc-400 cursor-not-allowed" : "border-blue-default text-blue-default hover:bg-blue-default hover:text-white cursor-pointer"} duration-200 ease-in`}
+                          disabled={item.index === 0}
+                          onClick={() => handleMoveUp({ ...item })}
+                        >
+                          <ArrowUp className="w-5 h-5" />
+                        </button>
+                        <button
+                          className={`flex items-center justify-center p-2 rounded-lg bg-white border-2 ${item.index === jobInfo.descriptions.length - 1 ? "border-zinc-400 text-zinc-400 cursor-not-allowed" : "border-blue-default text-blue-default hover:bg-blue-default hover:text-white cursor-pointer"} duration-200 ease-in`}
+                          disabled={
+                            item.index === jobInfo.descriptions.length - 1
+                          }
+                          onClick={() => handleMoveDown({ ...item })}
+                        >
+                          <ArrowDown className="w-5 h-5" />
+                        </button>
+                      </div>
+
                       <button
                         className="flex items-center justify-center p-2 rounded-lg bg-red-400 border-2 border-red-400 text-white duration-200 ease-in hover:bg-white hover:text-red-400"
-                        onClick={() => handleDelete(item.index)}
+                        onClick={() => handleDeleteDecriptions(item.index)}
                       >
                         <Trash className="w-5 h-5" />
                       </button>
@@ -638,9 +889,12 @@ export default function ListJobPage({ initJob }: PageProps) {
               >
                 <PlusIcon className="w-5 h-5" />
               </button>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-stretch">
                 {jobInfo.id && (
-                  <button className="flex-1 rounded-lg bg-red-400 border-2 border-red-400 text-white duration-200 ease-in hover:bg-white hover:text-red-400">
+                  <button
+                    onClick={() => resetState()}
+                    className="flex-1 rounded-lg bg-red-400 border-2 border-red-400 text-white duration-200 ease-in hover:bg-white hover:text-red-400"
+                  >
                     Hủy
                   </button>
                 )}

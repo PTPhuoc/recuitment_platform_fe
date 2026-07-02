@@ -5,6 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import { BoldIcon, Italic, List, ListOrdered } from "lucide-react";
 import { cn } from "../libs/utils";
+import { useMemo } from "react";
 
 type InputProps = {
   className?: string;
@@ -29,21 +30,23 @@ export default function InputTextEditer({
   label,
   outValue,
 }: InputProps) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: { class: "text-blue-500 underline", target: "_blank" },
-      }),
-    ],
-    content: value,
-    onUpdate: ({ editor }) => {
-      const json = editor.getJSON();
-      outValue(json);
-    },
-    immediatelyRender: false,
-  });
+  const extensions = useMemo(() => [
+  StarterKit,
+  Link.configure({
+    openOnClick: false,
+    HTMLAttributes: { class: "text-blue-500 underline", target: "_blank" },
+  }),
+], []);
+
+const editor = useEditor({
+  extensions,
+  content: value,
+  onUpdate: ({ editor }) => {
+    const json = editor.getJSON();
+    outValue(json);
+  },
+  immediatelyRender: false,
+});
 
   if (!editor) return null;
 

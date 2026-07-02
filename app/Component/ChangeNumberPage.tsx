@@ -4,6 +4,7 @@ import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { cn } from "../libs/utils";
 import { useState } from "react";
 import Loader from "./Loader";
+import page from "../(client)/page";
 
 type PageValue = {
   classButton?: string;
@@ -11,6 +12,7 @@ type PageValue = {
   classDisabled?: string;
   classWaiting?: string;
   next: string | null;
+  pageNumber?: number;
   previous: string | null;
   onNextPage?: (url: string) => Promise<string> | string;
   onPreviousPage?: (url: string) => Promise<string> | string;
@@ -22,6 +24,7 @@ export default function ChangeNumberPage({
   classDisabled,
   classWaiting,
   next,
+  pageNumber,
   previous,
   onNextPage,
   onPreviousPage,
@@ -47,7 +50,7 @@ export default function ChangeNumberPage({
   };
 
   return (
-    <div className={cn("flex gap-2 items-center justify-center", className)}>
+    <div className={cn("flex gap-2 items-stretch justify-center", className)}>
       <button
         className={
           isWaiting.previous
@@ -71,6 +74,11 @@ export default function ChangeNumberPage({
           <ArrowBigLeft className="w-6 h-6" />
         )}
       </button>
+      {pageNumber && (
+        <p className="flex justify-center items-center w-10 font-bold bg-blue-default rounded-lg text-light-blue border-2 border-blue-default ">
+          {pageNumber}
+        </p>
+      )}
       <button
         className={
           isWaiting.next

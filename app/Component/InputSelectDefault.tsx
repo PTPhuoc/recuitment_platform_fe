@@ -33,7 +33,6 @@ export default function InputSelectDefault({
   const [listValue, setListValue] = useState(listSearch);
   const [isFocus, setIsFocus] = useState(false);
 
-  // Danh sách các item đã chọn (từ value props)
   const selectedItems = useMemo(() => {
     return value.map((v) => {
       const found = listSearch.find((item) => item.value === v);

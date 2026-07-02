@@ -294,8 +294,8 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
               }}
             />
           </div>
-          <div className="flex-1 p-2 flex flex-col gap-2 border-2 border-blue-default rounded-xl min-w-0">
-            {paginate && paginate?.results?.length > 0 ? (
+          <div className="flex-1 p-2 flex flex-col gap-2 border-2 border-blue-default rounded-xl min-w-0 overflow-auto no-scroll">
+            {paginate && paginate.results?.length > 0 ? (
               paginate.results.map((item) => (
                 <div
                   key={item.id}

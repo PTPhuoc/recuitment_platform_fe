@@ -4,22 +4,22 @@ import { List } from "lucide-react";
 import { cn, handleSearch } from "../libs/utils";
 import { useEffect, useMemo, useState } from "react";
 
-type ListSearchValue = {
+type ListSearchValue<T, K extends keyof T, S extends keyof T> = {
   label?: string;
   className?: string;
   classAll?: string;
   classDisable?: string;
   classLabel?: string;
   placeholder?: string;
-  listValue: any[] | null;
-  attrSearch: string;
-  attrGet: string;
+  listValue: T[] | null;
+  attrSearch: S;
+  attrGet: K;
   value: string;
   disable?: boolean;
-  outValue: (value: string) => void;
+  outValue: (value: T[K]) => void;
 };
 
-export default function ListSearch({
+export default function ListSearch<T, K extends keyof T, S extends keyof T>({
   value = "",
   label,
   className,
@@ -32,32 +32,27 @@ export default function ListSearch({
   attrGet,
   disable = false,
   outValue,
-}: ListSearchValue) {
-  const [searchValue, setSearchValue] = useState("");
+}: ListSearchValue<T, K, S>) {
+  const [searchValue, setSearchValue] = useState<string>("");
   const [isFocus, setIsFocus] = useState(false);
   const [listSearch, setListSearch] = useState(listValue);
 
   const displayName = useMemo(() => {
     if (!value) return "";
     const found = listValue?.find(item => item[attrGet] === value);
-    return found ? found[attrSearch] : "";
+    return found ? String(found[attrSearch] ?? "") : "";
   }, [value, listValue, attrGet, attrSearch]);
 
   useEffect(() => {
     setSearchValue(displayName);
   }, [displayName]);
 
-  const handleOutValue = (val: string) => {
-    const trimmed = val.trim();
-    setSearchValue(trimmed);
-  };
-
   useEffect(() => {
     setListSearch(
       handleSearch({
         listSearch: listValue ?? null,
         attrSearch: attrSearch,
-        value: searchValue,
+        value: searchValue.trim(),
       })
     );
   }, [searchValue, listValue, attrSearch]);
@@ -90,7 +85,7 @@ export default function ListSearch({
         placeholder={placeholder}
         onFocus={() => !disable && setIsFocus(true)}
         onBlur={() => !disable && setIsFocus(false)}
-        onChange={(e) => !disable && handleOutValue(e.target.value)}
+        onChange={(e) => !disable && setSearchValue(e.target.value)}
       />
       <div
         className={cn(
@@ -105,10 +100,10 @@ export default function ListSearch({
               onClick={(e) => {
                 e.stopPropagation();
                 outValue(item[attrGet]);
-                setSearchValue(item[attrSearch]);
+                setSearchValue(String(item[attrSearch]));
               }}
             >
-              {item[attrSearch]}
+              {String(item[attrSearch])}
             </button>
           ))
         ) : (

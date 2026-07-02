@@ -29,6 +29,7 @@ export default function ImageShow({
 }: PageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
+  
   useEffect(() => {
     if (!containerRef.current) return;
     const updateHeight = () => {
