@@ -16,7 +16,10 @@ type PageValue = {
   user: {
     id: string;
     email: string;
-    role: "pending" | "admin" | "employer" | "candidate";
+    phone_number: string;
+    role: "admin" | "employer" | "candidate" | "pending";
+    status: "active" | "ban" | "pending" | "delete";
+    date_created: Date | string | "";
   } | null;
   children: React.ReactNode;
 };

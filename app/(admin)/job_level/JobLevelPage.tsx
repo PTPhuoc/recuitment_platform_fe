@@ -5,6 +5,7 @@ import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import ListSearch from "@/app/Component/ListSearch";
 import { usePopup } from "@/app/Component/Popup";
+import getLanguages from "@/app/constants/web/languages";
 import { useToast } from "@/app/hook/ToastContext";
 import { checkField } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
@@ -14,11 +15,6 @@ import { PackageOpen, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const listLang = [
-  { name: "Tiếng Việt", value: "vie" },
-  { name: "Tiếng Anh", value: "eng" },
-];
 
 type JobLevelItem = {
   id: string;
@@ -290,39 +286,27 @@ export default function JobLevelPage({
           </button>
         </div>
         <div className="flex-1 flex flex-col gap-2 p-3 bg-white rounded-2xl shadow-default min-h-0">
-          <div className="flex items-stretch gap-3 flex-wrap">
+          <div className="flex items-stretch gap-2 max-lg:flex-col">
             <InputTextDefault
               className="flex-1"
+              classAll="rounded-xl"
               outValue={(value) => setSearch({ ...search, name: value })}
               value={search.name}
               label="Tên"
             />
             <InputTextDefault
               className="flex-1"
+              classAll="rounded-xl"
               outValue={(value) => setSearch({ ...search, slug: value })}
               value={search.slug}
               label="Tên chung"
             />
-          </div>
-          <div className="flex items-stretch gap-3 flex-wrap">
-            <ListSearch
-              className="z-1 flex-2"
-              listValue={listLang}
-              attrSearch="name"
-              attrGet="value"
-              value={initLang ?? search.lang}
-              placeholder="Chọn ngôn ngữ"
-              label="Ngôn ngữ"
-              outValue={(value: any) => setSearch({ ...search, lang: value })}
-            />
             <ButtonDefault
               label="Tìm kiếm"
+              classAll="rounded-xl"
               funsHandle={async () =>
                 await handleSearch(search.name, search.slug, search.lang)
               }
-              className="flex-1 min-w-50"
-              classLoad="flex-1 min-w-50"
-              classDisabled="flex-1 min-w-50"
             />
           </div>
           <div className="flex-1 flex gap-2 max-lg:flex-col min-h-0">
@@ -500,9 +484,7 @@ export default function JobLevelPage({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center p-3 bg-blue-default shadow-default">
-            <p className="font-bold text-light-blue">
-              Tạo danh mục Cấp bậc
-            </p>
+            <p className="font-bold text-light-blue">Tạo danh mục Cấp bậc</p>
             <button
               className="bg-light-blue text-blue-default border-2 border-light-blue rounded-md scale-100 duration-200 ease-in hover:bg-blue-default hover:text-white active:scale-95"
               onClick={() => setIsOpen(false)}
@@ -520,7 +502,7 @@ export default function JobLevelPage({
             />
             <ListSearch
               className="z-1"
-              listValue={listLang}
+              listValue={getLanguages(lang)}
               attrSearch="name"
               attrGet="value"
               value={jobLevel.lang}

@@ -69,6 +69,29 @@ export const fetchDefault = async ({ url, cookie = "" }: FetchValue) => {
   }
 };
 
+export const fetchRefreshCookie = async ({ url, cookie = "" }: FetchValue) => {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { Cookie: cookie },
+      cache: "no-store",
+    });
+    const setCookie = response.headers.get("set-cookie");
+    if (!response.ok) {
+      console.log(
+        `Error URL: ${url} -> ${response.statusText} - ${response.status}`,
+      );
+      return { data: null, cookie: setCookie };
+    }
+    const data = await response.json();
+    if (data.status !== "Success") return { data: null, cookie: setCookie };
+    return { data, cookie: setCookie };
+  } catch (error: any) {
+    console.log(`Error URL: ${url} -> ${error.message}`);
+    return { data: null, cookie: null };
+  }
+};
+
 type PercentValue = {
   max: number;
   current: number;
@@ -80,7 +103,7 @@ export const percent = ({ max, current }: PercentValue) => {
   return divine * 100;
 };
 
-export const getStringDate = (value : string | Date) => {
+export const getStringDate = (value: string | Date) => {
   const currentDate = value ? new Date(value) : new Date();
   const date = String(currentDate.getDate()).padStart(2, "0");
   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -244,10 +267,10 @@ export const trimAllField = (obj: Record<string, any>) => {
     if (typeof obj[key] === "string") obj[key] = obj[key].trim();
   }
   return obj;
-}
+};
 
 const validStatuses = ["pending", "active", "ban"] as const;
-type Status = typeof validStatuses[number] | "";
+type Status = (typeof validStatuses)[number] | "";
 
 export const validateStatus = (status: string | undefined): Status => {
   if (status && validStatuses.includes(status as any)) {

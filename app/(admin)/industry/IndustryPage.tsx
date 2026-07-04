@@ -5,21 +5,16 @@ import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import ListSearch from "@/app/Component/ListSearch";
 import { usePopup } from "@/app/Component/Popup";
+import getLanguages from "@/app/constants/web/languages";
 import { useToast } from "@/app/hook/ToastContext";
 import { checkField } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import axios from "axios";
-import { el } from "date-fns/locale";
 import { PackageOpen, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const listLang = [
-  { name: "Tiếng Việt", value: "vie" },
-  { name: "Tiếng Anh", value: "eng" },
-];
 
 type IndustryItem = {
   id: string;
@@ -291,39 +286,26 @@ export default function IndustryPage({
           </button>
         </div>
         <div className="flex-1 flex flex-col gap-2 p-3 bg-white rounded-2xl shadow-default min-h-0">
-          <div className="flex items-stretch gap-3 flex-wrap">
+          <div className="flex items-stretch gap-2 max-lg:flex-col">
             <InputTextDefault
               className="flex-1"
+              classAll="rounded-xl"
               outValue={(value) => setSearch({ ...search, name: value })}
               value={search.name}
               label="Tên"
             />
             <InputTextDefault
               className="flex-1"
+              classAll="rounded-xl"
               outValue={(value) => setSearch({ ...search, slug: value })}
               value={search.slug}
               label="Tên chung"
-            />
-          </div>
-          <div className="flex items-stretch gap-3 flex-wrap">
-            <ListSearch
-              className="z-1 flex-2"
-              listValue={listLang}
-              attrSearch="name"
-              attrGet="value"
-              value={initLang ?? search.lang}
-              placeholder="Chọn ngôn ngữ"
-              label="Ngôn ngữ"
-              outValue={(value: any) => setSearch({ ...search, lang: value })}
-            />
-            <ButtonDefault
+            /><ButtonDefault
               label="Tìm kiếm"
+              classAll="rounded-xl"
               funsHandle={async () =>
                 await handleSearch(search.name, search.slug, search.lang)
               }
-              className="flex-1 min-w-50"
-              classLoad="flex-1 min-w-50"
-              classDisabled="flex-1 min-w-50"
             />
           </div>
           <div className="flex-1 flex gap-2 max-lg:flex-col min-h-0">
@@ -521,7 +503,7 @@ export default function IndustryPage({
             />
             <ListSearch
               className="z-1"
-              listValue={listLang}
+              listValue={getLanguages(lang)}
               attrSearch="name"
               attrGet="value"
               value={industry.lang}

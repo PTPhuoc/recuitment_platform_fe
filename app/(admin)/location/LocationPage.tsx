@@ -4,6 +4,7 @@ import ButtonDefault from "@/app/Component/ButtonDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import ListSearch from "@/app/Component/ListSearch";
 import { usePopup } from "@/app/Component/Popup";
+import getLanguages from "@/app/constants/web/languages";
 import { useToast } from "@/app/hook/ToastContext";
 import { checkField, findWithTrans, searchWithTrans } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
@@ -12,17 +13,6 @@ import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { PackageOpen, Pencil, Plus, Trash2, X } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const listLang = [
-  { name: "Tiếng Việt", value: "vie" },
-  { name: "Tiếng Anh", value: "eng" },
-];
-
-const ListTypeLocation = [
-  { name: "Quốc gia", value: "country" },
-  { name: "Thành phố", value: "city" },
-  { name: "Quận/Huyện", value: "district" },
-];
 
 type TranslateItem = {
   id: string;
@@ -400,7 +390,7 @@ export default function LocationPage({
               value={search.country}
               attrGet="id"
               attrSearch="slug"
-              lable="Quốc gia"
+              label="Quốc gia"
               className="flex-3 z-3"
             />
             <ListSearch
@@ -417,7 +407,7 @@ export default function LocationPage({
               value={search.city}
               attrGet="id"
               attrSearch="slug"
-              lable="Thành phố"
+              label="Thành phố"
               className="flex-3 z-2"
             />
             <ListSearch
@@ -430,12 +420,12 @@ export default function LocationPage({
               value={search.district}
               attrGet="id"
               attrSearch="slug"
-              lable="Quận/Huyện"
+              label="Quận/Huyện"
               className="flex-3 z-1"
             />
             <ButtonDefault
               className="flex-1 rounded-xl"
-              lable="Tìm kiếm"
+              label="Tìm kiếm"
               funsHandle={() => handleSearch()}
             />
           </div>
@@ -713,7 +703,7 @@ export default function LocationPage({
                         </p>
                         <div className="flex gap-2 items-center justify-center duration-200 ease-in group-hover:border-white">
                           <ButtonDefault
-                            lable="Sửa"
+                            label="Sửa"
                             funsHandle={() => {
                               setLocation({
                                 ...location,
@@ -728,7 +718,7 @@ export default function LocationPage({
                             }}
                           />
                           <ButtonDefault
-                            lable="Xóa"
+                            label="Xóa"
                             className="border-red-400 bg-red-400 hover:text-red-400"
                             funsHandle={async () =>
                               await toggleDelete(
@@ -781,26 +771,26 @@ export default function LocationPage({
           <div className="flex-1 flex flex-col gap-3 px-3">
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên chung"
+              label="Tên chung"
               placeholder="Tên chung"
               value={location.slug}
               outValue={(value) => setLocation({ ...location, slug: value })}
             />
             <ListSearch
               className="z-1"
-              listValue={listLang}
+              listValue={getLanguages(lang)}
               attrSearch="name"
               attrGet="value"
               value={location.lang}
               placeholder="Chọn ngôn ngữ"
-              lable="Ngôn ngữ"
+              label="Ngôn ngữ"
               outValue={(value: any) =>
                 setLocation({ ...location, lang: value })
               }
             />
             <InputTextDefault
               className="rounded-xl"
-              lable="Tên"
+              label="Tên"
               placeholder="Tên Địa chỉ"
               value={location.name}
               outValue={(value) => setLocation({ ...location, name: value })}
@@ -813,7 +803,7 @@ export default function LocationPage({
             <ListSearch
               listValue={listCountry}
               value={location.country_id}
-              lable="Quốc gia"
+              label="Quốc gia"
               attrGet="id"
               attrSearch="slug"
               outValue={(value) =>
@@ -828,7 +818,7 @@ export default function LocationPage({
             <ListSearch
               listValue={SearchCity(location.country_id)}
               value={location.city_id}
-              lable="Thành phố"
+              label="Thành phố"
               attrGet="id"
               attrSearch="slug"
               outValue={(value) =>
@@ -842,7 +832,7 @@ export default function LocationPage({
             />
             <div className="flex gap-2 items-center">
               <ButtonDefault
-                lable="Xác nhận"
+                label="Xác nhận"
                 disabled={
                   !checkField({
                     lang: location.lang,

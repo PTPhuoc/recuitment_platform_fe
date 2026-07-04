@@ -183,7 +183,7 @@ export default function ListAccountPage({
                           {item.status}
                         </p>
                         <p className="flex items-center p-1 border-2 border-zinc-200 rounded-lg duration-200 ease-in group-hover:border-white">
-                          {getStringDate({ value: item.date_created })}
+                          {getStringDate( item.date_created )}
                         </p>
                         <div className="flex justify-center items-center p-1 gap-1 border-2 border-zinc-200 rounded-lg duration-200 ease-in group-hover:border-white">
                           {item.role === "admin" ? (

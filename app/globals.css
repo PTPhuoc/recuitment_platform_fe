@@ -1,3 +1,5 @@
+/* app/globals.css */
+
 @import "tailwindcss";
 
 :root {
@@ -222,4 +224,26 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .ProseMirror:focus {
   outline: none !important;
+}
+
+.move-active{
+  transform: translate(0,0);
+  opacity: 1;
+  transition: all 0.5s ease-in-out;
+}
+
+.move-top{
+  transform: translate(0,100%);
+  opacity: 0;
+}
+
+.dust {
+  scale: 2;
+  opacity: 0;
+}
+
+.clear {
+  scale: 1;
+  opacity: 1;
+  transition: all 1s ease-in-out;
 }

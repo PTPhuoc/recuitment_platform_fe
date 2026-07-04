@@ -23,7 +23,7 @@ export default function AdminBottomBar() {
         }
         funsHandle={() => {
           dispatch(setLeftBar(!webState.isLeftBar));
-          return true;
+          return "success";
         }}
       />
     </div>

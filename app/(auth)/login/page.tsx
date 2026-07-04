@@ -48,10 +48,10 @@ export default function page() {
 
   return (
     <div className="w-full h-screen max-xl:min-h-200 max-md:min-h-100 flex items-center justify-center">
-      <div className="relative w-[60%] max-2xl:w-4/5 max-xl:w-[85%] max-lg:w-[90%] max-md:w-full h-[85%] max-xl:h-[90%] max-lg:[95%] max-md:h-full p-5 max-md:py-2 max-md:px-0 flex md:gap-5 rounded-xl max-md:rounded-none overflow-hidden max-lg:flex-wrap-reverse shadow-default">
+      <div className="relative w-3/5 max-2xl:w-4/5 max-xl:w-[85%] max-lg:w-[90%] max-md:w-full h-[85%] max-xl:h-[90%] max-lg:[95%] max-md:h-full p-5 max-md:py-2 max-md:px-0 flex md:gap-5 rounded-xl max-md:rounded-none overflow-hidden max-lg:flex-wrap-reverse shadow-default">
         <CldImage
-          src="https://res.cloudinary.com/dfr6besvl/image/upload/v1774180454/background_login_f1f13b.webp"
-          alt="Background Login"
+          src="https://res.cloudinary.com/dlorwajri/image/upload/v1783200942/background_login_xx3heb.webp"
+          alt="Background_Login"
           loading="eager"
           className="absolute -z-1 object-cover"
           sizes="(max-width: 768px) 100vw, 50vw"

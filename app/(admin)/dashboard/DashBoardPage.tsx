@@ -59,7 +59,7 @@ export default function DashBoardPage() {
       <div className="flex flex-col w-3/4 max-lg:w-[95%] max-sm:w-full gap-3 max-lg:gap-2 py-3 max-lg:py-2 items-stretch overflow-auto no-scroll">
         <div className="p-3 bg-blue-default sm:rounded-2xl shadow-default">
           <p className="font-bold text-light-blue">
-            Thống kê - {getStringDate({ value: null })}
+            Thống kê - {getStringDate("")}
           </p>
         </div>
         <div className="flex-1 flex lg:gap-3 gap-2 max-xl:flex-col">
