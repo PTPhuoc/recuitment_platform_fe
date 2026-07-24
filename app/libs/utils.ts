@@ -278,3 +278,17 @@ export const validateStatus = (status: string | undefined): Status => {
   }
   return "";
 };
+
+export const validateNumber = (
+  number: string | undefined,
+  max: number | undefined,
+  min: number | undefined,
+): number | undefined => {
+  if (max && number && Number(number) > max) {
+    return max;
+  }
+  if (min && number && Number(number) < min) {
+    return min;
+  }
+  return Number(number) || undefined;
+};

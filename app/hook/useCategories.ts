@@ -40,20 +40,23 @@ const fetchCategories = async (
   company: {
     id: string;
     name: string;
-  }[]
+  }[];
 }> => {
   const response = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}web/categories/?lang=${lang}`,
   );
-  const categories = response.data;
-  return {
-    industry: categories.industry,
-    location: categories.location,
-    formOfWork: categories.form_of_work,
-    jobLevel: categories.job_level,
-    education: categories.education,
-    company: categories.company
-  };
+  if (response.data.status === "Success") {
+    const categories = response.data.categories;
+    return {
+      industry: categories.industry,
+      location: categories.location,
+      formOfWork: categories.form_of_work,
+      jobLevel: categories.job_level,
+      education: categories.education,
+      company: categories.company,
+    };
+  }
+  throw new Error(response.data.message ?? response.statusText);
 };
 
 // app/hook/useCategories.ts

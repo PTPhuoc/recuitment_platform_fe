@@ -14,7 +14,7 @@ import { usePopup } from "@/app/Component/Popup";
 import { getNameStatus, getStatus } from "@/app/constants/job/status";
 import { useToast } from "@/app/hook/ToastContext";
 import { useCategories } from "@/app/hook/useCategories";
-import { getStringDate, Relist } from "@/app/libs/utils";
+import { getStringDate, Relist, validateNumber } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -31,10 +31,24 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+type RequireItem = {
+  id: string;
+  job: string;
+  location: string;
+  quantity: number | undefined;
+  form_of_work: string[];
+  educations: string[];
+  industries: string[];
+  min_salary: number| undefined;
+  max_salary: number| undefined;
+  min_experience: number| undefined;
+  max_experience: number| undefined;
+};
+
 type JobItem = {
   id: string;
-  company: {
-    id: string;
+  company: string;
+  company_detail: {
     name: string;
     image: string;
   };
@@ -51,24 +65,13 @@ type JobItem = {
     description: Record<string, any>;
     index: number;
   }[];
-  require: {
-    id: string;
-    job: string;
-    location: string;
-    form_of_work: string[];
-    educations: string[];
-    industries: string[];
-    min_salary: number;
-    max_salary: number;
-    min_experience: number;
-    max_experience: number;
-  };
+  require: RequireItem;
 };
 
 type JobItemGet = {
   id: string;
-  company: {
-    id: string;
+  company: string;
+  company_detail: {
     name: string;
     image: string;
   };
@@ -85,18 +88,7 @@ type JobItemGet = {
     description: string;
     index: number;
   }[];
-  require: {
-    id: string;
-    job: string;
-    location: string;
-    form_of_work: string[];
-    educations: string[];
-    industries: string[];
-    min_salary: number;
-    max_salary: number;
-    min_experience: number;
-    max_experience: number;
-  };
+  require: RequireItem;
 };
 
 type Paginate = {
@@ -145,8 +137,8 @@ export default function ListJobPage({
   const [paginate, setPaginate] = useState<Paginate>(initJob);
   const [jobInfo, setJobInfo] = useState<JobItem>({
     id: "",
-    company: {
-      id: "",
+    company: "",
+    company_detail: {
       name: "",
       image: "",
     },
@@ -161,6 +153,7 @@ export default function ListJobPage({
       id: "",
       job: "",
       location: "",
+      quantity: 1,
       form_of_work: [],
       educations: [],
       industries: [],
@@ -404,8 +397,8 @@ export default function ListJobPage({
   const resetState = () => {
     setJobInfo({
       id: "",
-      company: {
-        id: "",
+      company: "",
+      company_detail: {
         name: "",
         image: "",
       },
@@ -420,6 +413,7 @@ export default function ListJobPage({
         id: "",
         job: "",
         location: "",
+        quantity: 1,
         form_of_work: [],
         educations: [],
         industries: [],
@@ -469,10 +463,6 @@ export default function ListJobPage({
       });
     }
   }, [isLoading, error, categories]);
-
-  useEffect(() => {
-    console.log(paginate);
-  }, [paginate]);
 
   return (
     <>
@@ -543,7 +533,7 @@ export default function ListJobPage({
                   }}
                 >
                   <ImageShow
-                    link={item.company.image}
+                    link={item.company_detail.image}
                     alt={item.name}
                     typeShape="fixed"
                     classImage="object-contain"
@@ -554,7 +544,7 @@ export default function ListJobPage({
                       {item.name}
                     </p>
                     <p className="truncate font-bold text-zinc-500">
-                      {item.company.name}
+                      {item.company_detail.name}
                     </p>
                     <p>Ngày tạo: {getStringDate(item.date_created)}</p>
                     <p>Trạng thái: {getNameStatus(item.status, lang)}</p>
@@ -639,10 +629,10 @@ export default function ListJobPage({
                 outValue={(value) =>
                   setJobInfo({
                     ...jobInfo,
-                    company: { ...jobInfo.company, id: value },
+                    company: value,
                   })
                 }
-                value={jobInfo.company.id}
+                value={jobInfo.company}
               />
               <InputTextDefault
                 label="Đường dẩn nguồn"
@@ -739,66 +729,91 @@ export default function ListJobPage({
                   })
                 }
               />
-              <InputNumberDefault
+              <InputTextDefault
                 classAll="rounded-lg"
                 className="z-1"
                 classLabel="rounded-md w-40"
                 label="Lương tối đa"
-                value={jobInfo.require.max_salary}
+                placeholder="15000000"
+                regex={/[^0-9]/g}
+                value={jobInfo.require.max_salary?.toString() || ""}
                 outValue={(value) =>
                   setJobInfo({
                     ...jobInfo,
                     require: {
                       ...jobInfo.require,
-                      max_salary: value ? value : 0,
+                      max_salary: validateNumber(value, undefined, 0),
                     },
                   })
                 }
               />
-              <InputNumberDefault
+              <InputTextDefault
                 classAll="rounded-lg"
                 className="z-1"
                 classLabel="rounded-md w-40"
                 label="Lương tối thiểu"
-                value={jobInfo.require.min_salary}
+                placeholder="1000000"
+                regex={/[^0-9]/g}
+                value={jobInfo.require.min_salary?.toString() || ""}
                 outValue={(value) =>
                   setJobInfo({
                     ...jobInfo,
                     require: {
                       ...jobInfo.require,
-                      min_salary: value ? value : 0,
+                      min_salary: validateNumber(value, undefined, 0),
                     },
                   })
                 }
               />
-              <InputNumberDefault
+              <InputTextDefault
                 classAll="rounded-lg"
                 className="z-1"
                 classLabel="rounded-md w-40"
                 label="Kinh nghiệm tối đa"
-                value={jobInfo.require.max_experience}
+                placeholder="5"
+                regex={/[^0-9]/g}
+                value={jobInfo.require.max_experience?.toString() || ""}
                 outValue={(value) =>
                   setJobInfo({
                     ...jobInfo,
                     require: {
                       ...jobInfo.require,
-                      max_experience: value ? value : 0,
+                      max_experience: validateNumber(value, 100, 0),
                     },
                   })
                 }
               />
-              <InputNumberDefault
+              <InputTextDefault
                 classAll="rounded-lg"
                 className="z-1"
                 classLabel="rounded-md w-45"
                 label="Kinh nghiệm tối thiểu"
-                value={jobInfo.require.min_experience}
+                placeholder="0"
+                regex={/[^0-9]/g}
+                value={jobInfo.require.min_experience?.toString() || ""}
                 outValue={(value) =>
                   setJobInfo({
                     ...jobInfo,
                     require: {
                       ...jobInfo.require,
-                      min_experience: value ? value : 0,
+                      min_experience: validateNumber(value, 100, 0),
+                    },
+                  })
+                }
+              />
+              <InputTextDefault
+                classAll="rounded-lg"
+                className="z-1"
+                classLabel="rounded-md w-45"
+                label="Số lượng"
+                regex={/[^0-9]/g}
+                value={jobInfo.require.quantity?.toString() || ""}
+                outValue={(value) =>
+                  setJobInfo({
+                    ...jobInfo,
+                    require: {
+                      ...jobInfo.require,
+                      quantity: validateNumber(value, 100, 0),
                     },
                   })
                 }

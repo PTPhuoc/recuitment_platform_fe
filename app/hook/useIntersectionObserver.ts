@@ -1,5 +1,5 @@
 type ObserverProp = {
-  target: string;
+  target: string[];
   insert: string;
   threshold?: number;
 };
@@ -16,7 +16,7 @@ export default function useIntersectionObserver({
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const el = entry.target as HTMLElement;
-          el.classList.remove(target);
+          el.classList.remove(...target);
           el.classList.add(insert);
           el.style.transitionDelay = `${delay}s`;
           delay += 0.3;
@@ -25,6 +25,7 @@ export default function useIntersectionObserver({
     },
     { threshold: threshold },
   );
-  document.querySelectorAll(`.${target}`).forEach((el) => observer.observe(el));
+  const selector = target.map((cls) => `.${cls}`).join(", ");
+  document.querySelectorAll(selector).forEach((el) => observer.observe(el));
   return observer;
 }
