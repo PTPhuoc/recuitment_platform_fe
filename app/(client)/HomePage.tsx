@@ -70,7 +70,7 @@ export default function HomePage() {
           <div className="flex gap-5 max-sm:flex-col items-center">
             <div className="move-top">
               <Link
-                href="/job"
+                href="/jobs"
                 className="w-50 p-3 flex gap-5 items-center bg-dark-blue text-white rounded-2xl border-2 border-dark-blue duration-200 ease-in shadow-default hover:bg-white hover:text-dark-blue"
               >
                 <p className="font-bold flex-1 text-center">Find Jobs</p>
@@ -134,10 +134,10 @@ export default function HomePage() {
           </p>
           <div className="drop">
             <Link
-            href="/job"
-            className="w-50 p-3 flex gap-5 items-center bg-dark-blue text-white rounded-2xl border-2 border-dark-blue duration-200 ease-in shadow-default hover:bg-white hover:text-dark-blue"
+            href="/jobs"
+            className="p-3 flex gap-5 items-center bg-dark-blue text-white rounded-2xl border-2 border-dark-blue duration-200 ease-in shadow-default hover:bg-white hover:text-dark-blue"
           >
-            <p className="font-bold flex-1 text-center">Find Jobs</p>
+            <p className="font-bold flex-1 text-center">Find more Jobs</p>
             <SquareArrowOutUpRight className="h-5 w-5" />
           </Link>
           </div>

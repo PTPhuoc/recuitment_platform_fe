@@ -116,23 +116,23 @@ type SearchValue = {
   attrSearch: string | number | symbol;
 };
 
-export const handleSearch = ({
-  listSearch,
-  value,
-  attrSearch,
-}: SearchValue) => {
-  if (!listSearch) return [];
-  if (!value) return listSearch;
-  try {
-    const found = listSearch.filter((item) => {
-      const fieldValue = item[attrSearch];
-      if (!fieldValue) return false;
-      return fieldValue.toLowerCase().includes(value.toLowerCase());
-    });
-    return found;
-  } catch (error) {
-    return [];
-  }
+export const handleSearch = <T, S extends keyof T>(
+    value: string,
+    listSearch: T[],
+    attrSearch: S,
+  ) => {
+    if(!listSearch) return [];
+    if (!value) return listSearch;
+    try {
+      const found = listSearch.filter((item) => {
+        const fieldValue = String(item[attrSearch]);
+        if (!fieldValue) return false;
+        return fieldValue.toLowerCase().includes(value.toLowerCase());
+      });
+      return found;
+    } catch (error) {
+      return [];
+    }
 };
 
 export const checkField = (obj: Record<string, any>): boolean => {
@@ -250,13 +250,14 @@ type ReListItem = {
 
 export const Relist = <T extends ReListItem>(
   list: T[] | null,
-): (Omit<T, "translations"> & { name: string; value: string })[] => {
+): (Omit<T, "translations"> & { name: string; value: string, slug: string })[] => {
   if (!list) return [];
   return list.map((item) => {
     const { translations, ...rest } = item;
     return {
       ...rest,
       name: translations?.[0]?.name || "",
+      slug: item.slug,
       value: item.id,
     };
   });

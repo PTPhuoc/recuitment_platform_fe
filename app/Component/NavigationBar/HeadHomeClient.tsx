@@ -34,7 +34,7 @@ export default function HeadHomeClient({ className }: PageProps) {
   return (
     <div
       className={cn(
-        "flex w-full z-10 h-20 max-sm:h-15 justify-between items-center px-10 py-2 bg-white shadow-default",
+        "flex w-full z-10 h-20 max-sm:h-15 justify-between items-center px-10 py-2 bg-white shadow-default shrink-0",
         className,
       )}
     >
@@ -66,23 +66,23 @@ export default function HeadHomeClient({ className }: PageProps) {
           </button>
           <button
             className="group relative font-bold w-20 cursor-pointer"
-            disabled={pathname === "/job"}
-            onClick={() => router.push("/job")}
+            disabled={pathname === "/jobs"}
+            onClick={() => router.push("/jobs")}
           >
             <span
               className={`absolute left-0 bottom-0 w-full h-1 bg-blue-default duration-200 ease-in-out ${pathname === "/job" ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
             />
-            Job
+            Jobs
           </button>
           <button
             className="group relative font-bold w-20 cursor-pointer"
-            disabled={pathname === "/company"}
-            onClick={() => router.push("/company")}
+            disabled={pathname === "/companies"}
+            onClick={() => router.push("/companies")}
           >
             <span
               className={`absolute left-0 bottom-0 w-full h-1 bg-blue-default duration-200 ease-in-out ${pathname === "/company" ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
             />
-            Company
+            Companies
           </button>
           <button
             className="group relative font-bold w-20 cursor-pointer"

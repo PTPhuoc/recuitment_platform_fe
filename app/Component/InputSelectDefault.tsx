@@ -51,13 +51,7 @@ export default function InputSelectDefault({
   };
 
   useEffect(() => {
-    setListValue(
-      handleSearch({
-        listSearch: listSearch ?? null,
-        attrSearch: "name",
-        value: inputValue,
-      }),
-    );
+    setListValue(handleSearch(inputValue, listSearch, "name"));
   }, [inputValue, listSearch]);
 
   return (

@@ -5,6 +5,7 @@ import { cn, handleSearch } from "../libs/utils";
 import { MapPin, X } from "lucide-react";
 
 type InputAddressProps = {
+  classParentDiv?: string;
   className?: string;
   classAll?: string;
   classDisable?: string;
@@ -18,6 +19,7 @@ type InputAddressProps = {
 };
 
 export default function InputAddressDefault({
+  classParentDiv,
   className,
   classAll,
   classDisable,
@@ -112,11 +114,7 @@ export default function InputAddressDefault({
     const timer = setTimeout(() => {
       if (inputValue) {
         const firstValue = inputValue.split(", ")[0];
-        const search = handleSearch({
-          listSearch: listSearch ?? null,
-          attrSearch: "name",
-          value: firstValue,
-        });
+        const search = handleSearch(firstValue, listSearch, "name");
         if (search.length > 0) {
           const addSubName = search.map((item) => ({
             name: item.name,
@@ -135,17 +133,17 @@ export default function InputAddressDefault({
   }, [inputValue, listSearch]);
 
   return (
-    <div className={cn("flex flex-col gap-1", classAll)}>
+    <div className={cn("flex flex-col gap-1", classParentDiv, classAll)}>
       <div
         className={
           disabled
             ? cn(
-                "relative flex p-1 gap-2 items-center bg-zinc-200 border-2 border-zinc-300 rounded-2xl shadow-default",
+                "relative flex p-1 gap-2 items-stretch bg-zinc-200 border-2 border-zinc-300 rounded-2xl shadow-default min-w-50",
                 classDisable,
                 classAll,
               )
             : cn(
-                "group relative flex p-1 gap-2 items-center bg-white border-2 border-blue-default rounded-2xl shadow-default",
+                "group relative flex p-1 gap-2 items-stretch bg-white border-2 border-blue-default rounded-2xl shadow-default min-w-50",
                 className,
                 classAll,
               )

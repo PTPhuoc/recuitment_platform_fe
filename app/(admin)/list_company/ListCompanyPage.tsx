@@ -76,11 +76,11 @@ export default function ListCompanyPage({ initCompany }: PageProps) {
   const [paginate, setPaginate] = useState<CompanyPaginate>(initCompany);
   const { data: categories, isLoading, error } = useCategories("vie");
   const [category, setCategory] = useState<{
-    industry: { name: string; value: string }[];
+    industry: { name: string; value: string, slug: string }[];
     location: { name: string; value: string; parent_id: string }[];
-    formOfWork: { name: string; value: string }[];
-    jobLevel: { name: string; value: string }[];
-    education: { name: string; value: string }[];
+    formOfWork: { name: string; value: string, slug: string }[];
+    jobLevel: { name: string; value: string, slug: string }[];
+    education: { name: string; value: string, slug: string }[];
   }>({
     industry: [],
     location: [],

@@ -77,11 +77,7 @@ export default function InputSelectAddress({
     const time = setTimeout(() => {
       if (inputValue) {
         const firstValue = inputValue.split(", ")[0];
-        const search = handleSearch({
-          listSearch: listSearch ?? null,
-          attrSearch: "name",
-          value: firstValue,
-        });
+        const search = handleSearch(firstValue, listSearch, "name");
         if (search.length > 0) {
           const addSubName = search.map((item) => ({
             name: item.name,

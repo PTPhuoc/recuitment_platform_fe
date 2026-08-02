@@ -13,6 +13,7 @@ type InputProps = {
   value?: string;
   label?: string;
   regex?: RegExp;
+  icon?: React.ReactNode;
   outValue: (value: string) => void;
 };
 
@@ -26,6 +27,7 @@ export default function InputTextDefault({
   value = "",
   label,
   regex,
+  icon,
   outValue,
 }: InputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,12 +44,12 @@ export default function InputTextDefault({
       className={
         disabled
           ? cn(
-              "flex p-1 gap-2 items-center bg-white border-2 border-zinc-300 rounded-2xl shadow-default",
+              "flex p-1 gap-2 items-stretch bg-white border-2 border-zinc-300 rounded-2xl shadow-default min-w-50",
               classDisable,
               classAll,
             )
           : cn(
-              "flex p-1 gap-2 items-center bg-white border-2 border-blue-default rounded-2xl shadow-default",
+              "flex p-1 gap-2 items-stretch bg-white border-2 border-blue-default rounded-2xl shadow-default min-w-50",
               className,
               classAll,
             )
@@ -70,7 +72,7 @@ export default function InputTextDefault({
                 )
           }
         >
-          <PenLine className="w-5 h-5 max-lg:hidden" />
+          {icon ?? <PenLine className="w-5 h-5 max-lg:hidden" />}
           {label && <p className="flex-1 text-center">{label}</p>}
         </div>
         <input
