@@ -1,18 +1,14 @@
 "use client";
 
 import ButtonDefault from "@/app/Component/ButtonDefault";
-import CBMultipleFilter from "@/app/Component/CheckBox/CBMultipleFilter";
-import CBSingleFilter from "@/app/Component/CheckBox/CBSingleFilter";
 import JobSearch from "@/app/Component/Input/JobSearch";
-import ListSearch from "@/app/Component/ListSearch";
 import { useCategories } from "@/app/hook/useCategories";
 import { Relist } from "@/app/libs/utils";
 import { RootState } from "@/app/store/store";
-import { Triangle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import SalaryFilter from "./SalaryFilter";
-import ExprienceFilter from "./ExprienceFilter";
+import ListSingleFilter from "@/app/Component/CheckBox/ListSingleFilter";
+import ListMultipleFilter from "@/app/Component/CheckBox/ListMultipleFilter";
 
 type JobSearchProps = {
   name: string;
@@ -20,11 +16,17 @@ type JobSearchProps = {
   industry: string;
   salary: string;
   exprience: string;
+  jobLevel: string;
+  formOfWork: string[];
+  education: string[];
 };
 
 type JobFilterProps = {
   salary: boolean;
   exprience: boolean;
+  jobLevel: boolean;
+  formOfWork: boolean;
+  education: boolean;
 };
 
 type Categories = {
@@ -33,22 +35,30 @@ type Categories = {
   formOfWork: { name: string; value: string; slug: string }[];
   jobLevel: { name: string; value: string; slug: string }[];
   education: { name: string; value: string; slug: string }[];
+  salary: { name: string; value: string; slug: string }[];
+  exprience: { name: string; value: string; slug: string }[];
 };
 
 // app/(client)/jobs/page.tsx
 export default function JobsPage() {
   const { lang } = useSelector((state: RootState) => state.web);
   const categories = useCategories(lang);
-  const [jobSearch, setJobSeaerch] = useState<JobSearchProps>({
+  const [jobSearch, setJobSearch] = useState<JobSearchProps>({
     name: "",
     location: "",
     industry: "",
     salary: "",
     exprience: "",
+    jobLevel: "",
+    formOfWork: [],
+    education: [],
   });
   const [jobFilter, setJobFilter] = useState<JobFilterProps>({
     salary: false,
     exprience: false,
+    jobLevel: false,
+    formOfWork: false,
+    education: false,
   });
 
   const [category, setCategory] = useState<Categories>({
@@ -57,6 +67,8 @@ export default function JobsPage() {
     formOfWork: [],
     jobLevel: [],
     education: [],
+    salary: [],
+    exprience: [],
   });
 
   useEffect(() => {
@@ -67,6 +79,8 @@ export default function JobsPage() {
         formOfWork: Relist(categories.data.formOfWork),
         jobLevel: Relist(categories.data.jobLevel),
         education: Relist(categories.data.education),
+        salary: Relist(categories.data.salary),
+        exprience: Relist(categories.data.exprience),
       });
     }
   }, [categories.data]);
@@ -100,7 +114,7 @@ export default function JobsPage() {
               industry: category.industry,
               location: category.location,
             }}
-            outValue={(value) => setJobSeaerch({ ...jobSearch, ...value })}
+            outValue={(value) => setJobSearch({ ...jobSearch, ...value })}
           />
           <ButtonDefault
             label="Tìm kiếm"
@@ -111,29 +125,76 @@ export default function JobsPage() {
       <div className="flex gap-5 p-5 w-full h-screen min-h-150">
         <div className="flex-1 flex flex-col gap-5 max-sm:hidden">
           <div className="sticky top-5 flex flex-col gap-5 w-full p-5 bg-white rounded-2xl shadow-default overflow-auto no-scroll">
-            <SalaryFilter
+            <ListSingleFilter
+              className="rounded-xl"
+              lable="Mức lương"
+              categories={category.salary}
               value={jobSearch.salary}
               isOpen={jobFilter.salary}
               outStatus={(value) =>
                 setJobFilter({ ...jobFilter, salary: value })
               }
               outValue={(value) =>
-                setJobSeaerch({ ...jobSearch, salary: value })
+                setJobSearch({ ...jobSearch, salary: value })
               }
             />
-            <ExprienceFilter
+            <ListSingleFilter
+              className="rounded-xl"
+              lable="Kinh nghiệm"
+              categories={category.exprience}
               value={jobSearch.exprience}
               isOpen={jobFilter.exprience}
               outStatus={(value) =>
                 setJobFilter({ ...jobFilter, exprience: value })
               }
               outValue={(value) =>
-                setJobSeaerch({ ...jobSearch, exprience: value })
+                setJobSearch({ ...jobSearch, exprience: value })
+              }
+            />
+            <ListSingleFilter
+              className="rounded-xl"
+              lable="Cấp bật"
+              categories={category.jobLevel}
+              isOpen={jobFilter.jobLevel}
+              value={jobSearch.jobLevel}
+              outStatus={(value) =>
+                setJobFilter({ ...jobFilter, jobLevel: value })
+              }
+              outValue={(value) =>
+                setJobSearch({ ...jobSearch, jobLevel: value })
+              }
+            />
+            <ListMultipleFilter
+              className="rounded-xl"
+              lable="Hình thức làm việc"
+              categories={category.formOfWork}
+              isOpen={jobFilter.formOfWork}
+              value={jobSearch.formOfWork}
+              outStatus={(value) =>
+                setJobFilter({ ...jobFilter, formOfWork: value })
+              }
+              outValue={(value) =>
+                setJobSearch({ ...jobSearch, formOfWork: value })
+              }
+            />
+            <ListMultipleFilter
+              className="rounded-xl"
+              lable="Học vấn"
+              categories={category.education}
+              isOpen={jobFilter.education}
+              value={jobSearch.education}
+              outStatus={(value) =>
+                setJobFilter({ ...jobFilter, education: value })
+              }
+              outValue={(value) =>
+                setJobSearch({ ...jobSearch, education: value })
               }
             />
           </div>
         </div>
-        <div className="flex-2 bg-white border-2 border-dashed border-dark-blue rounded-2xl shadow-default"></div>
+        <div className="flex-2 bg-white border-2 border-dashed border-dark-blue rounded-2xl shadow-default">
+          
+        </div>
       </div>
       <div className="w-full h-screen"></div>
     </div>

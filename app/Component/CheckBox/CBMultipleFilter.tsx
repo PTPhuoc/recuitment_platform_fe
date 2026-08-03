@@ -1,5 +1,5 @@
 import { cn } from "@/app/libs/utils";
-import { Circle, CircleDashed } from "lucide-react";
+import { Square, SquareDashed } from "lucide-react";
 
 type CBFilterProps<T extends string | number> = {
   className?: string;
@@ -37,17 +37,17 @@ export default function CBMultipleFilter<T extends string | number>({
         handleOutValue();
       }}
     >
-      {!checked && <CircleDashed className="w-5 h-5 group-hover:hidden" />}
+      {!checked && <SquareDashed className="w-5 h-5 group-hover:hidden" />}
       <div
         className={`relative w-5 h-5 ${!checked && "hidden group-hover:block"}`}
       >
-        <Circle
+        <Square
           className={`absolute w-full h-full z-2 ${
             checked && "text-white"
           } duration-200 ease-in-out`}
         />
         <div
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full z-1 rounded-full duration-200 ease-in-out ${
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full z-1 rounded-sm duration-200 ease-in-out ${
             checked ? "scale-130 bg-blue-default" : "scale-0 bg-white"
           }`}
         ></div>
