@@ -29,7 +29,7 @@ export const fetchWithCookie = async ({
       cache: "no-store",
     });
     if (!response.ok) {
-      console.log(
+      console.warn(
         `Error URL: ${url} -> ${response.statusText} - ${response.status}`,
       );
       return null;
@@ -53,7 +53,7 @@ export const fetchDefault = async ({ url, cookie = "" }: FetchValue) => {
       cache: "no-store",
     });
     if (!response.ok) {
-      console.log(
+      console.warn(
         `Error URL: ${url} -> ${response.statusText} - ${response.status}`,
       );
       return null;
@@ -78,7 +78,7 @@ export const fetchRefreshCookie = async ({ url, cookie = "" }: FetchValue) => {
     });
     const setCookie = response.headers.get("set-cookie");
     if (!response.ok) {
-      console.log(
+      console.warn(
         `Error URL: ${url} -> ${response.statusText} - ${response.status}`,
       );
       return { data: null, cookie: setCookie };

@@ -74,11 +74,11 @@ export default function JCHome({ job, industrieMap, parentDiv }: PageProps) {
   return (
     <div
       key={job.id}
-      className={cn("w-100 max-md:w-75 h-full shrink-0", parentDiv)}
+      className={cn("w-100 max-md:w-80 h-full shrink-0", parentDiv)}
     >
       <div
         className="flex flex-col p-5 gap-5 w-full h-full rounded-lg shadow-default border-2 border-blue-default scale-100 cursor-pointer duration-200 ease-in-out hover:border-dark-blue hover:scale-105"
-        onClick={() => router.push(`/job/detail/${job.id}`)}
+        onClick={() => router.push(`/jobs/${job.id}/detail`)}
       >
         <div className="flex flex-1 items-center">
           <p className="flex-1 text-2xl font-bold line-clamp-2">{job.name}</p>

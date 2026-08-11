@@ -2,6 +2,7 @@
 
 import { cn } from "@/app/libs/utils";
 import { setRole, setUser } from "@/app/store/slices/authSlice";
+import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { getOrRefresh } from "@/app/store/Thunks/authThuk";
 import { UserCircle } from "lucide-react";
@@ -42,7 +43,10 @@ export default function HeadHomeClient({ className }: PageProps) {
         <button
           className="px-3 rounded-2xl"
           disabled={pathname === "/"}
-          onClick={() => router.push("/")}
+          onClick={() => {
+            dispatch(setLoad(true));
+            router.push("/");
+          }}
         >
           <h1 className="group text-5xl font-bold text-dark-blue duration-200 ease-in-out hover:scale-105 cursor-pointer">
             <span className="text-blue-default duration-200 ease-in-out group-hover:text-dark-blue">
@@ -57,7 +61,10 @@ export default function HeadHomeClient({ className }: PageProps) {
           <button
             className="group relative font-bold w-20 cursor-pointer"
             disabled={pathname === "/"}
-            onClick={() => router.push("/")}
+            onClick={() => {
+              dispatch(setLoad(true));
+              router.push("/");
+            }}
           >
             <span
               className={`absolute left-0 bottom-0 w-full h-1 bg-blue-default duration-200 ease-in-out ${pathname === "/" ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
@@ -67,7 +74,10 @@ export default function HeadHomeClient({ className }: PageProps) {
           <button
             className="group relative font-bold w-20 cursor-pointer"
             disabled={pathname === "/jobs"}
-            onClick={() => router.push("/jobs")}
+            onClick={() => {
+              dispatch(setLoad(true));
+              router.push("/jobs");
+            }}
           >
             <span
               className={`absolute left-0 bottom-0 w-full h-1 bg-blue-default duration-200 ease-in-out ${pathname === "/job" ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
@@ -77,7 +87,10 @@ export default function HeadHomeClient({ className }: PageProps) {
           <button
             className="group relative font-bold w-20 cursor-pointer"
             disabled={pathname === "/companies"}
-            onClick={() => router.push("/companies")}
+            onClick={() => {
+              dispatch(setLoad(true));
+              router.push("/companies");
+            }}
           >
             <span
               className={`absolute left-0 bottom-0 w-full h-1 bg-blue-default duration-200 ease-in-out ${pathname === "/company" ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
@@ -87,7 +100,10 @@ export default function HeadHomeClient({ className }: PageProps) {
           <button
             className="group relative font-bold w-20 cursor-pointer"
             disabled={pathname === "/about"}
-            onClick={() => router.push("/about")}
+            onClick={() => {
+              dispatch(setLoad(true));
+              router.push("/about");
+            }}
           >
             <span
               className={`absolute left-0 bottom-0 w-full h-1 bg-blue-default duration-200 ease-in-out ${pathname === "/about" ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
@@ -99,13 +115,14 @@ export default function HeadHomeClient({ className }: PageProps) {
       <button
         className="p-2 rounded-full bg-blue-default text-white border-2 border-blue-default cursor-pointer duration-200 ease-in hover:bg-white hover:text-blue-default"
         disabled={pathname === "/profile"}
-        onClick={() =>
+        onClick={() => {
+          dispatch(setLoad(true));
           user.id
             ? user.role === "admin"
               ? router.push("/dashboard")
               : router.push("/profile")
-            : router.push("/login")
-        }
+            : router.push("/login");
+        }}
       >
         <UserCircle />
       </button>
