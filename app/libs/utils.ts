@@ -110,12 +110,6 @@ export const getStringDate = (value: string | Date) => {
   return `${date}/${month}/${currentDate.getFullYear()}`;
 };
 
-type SearchValue = {
-  value: string | null;
-  listSearch: any[] | null;
-  attrSearch: string | number | symbol;
-};
-
 export const handleSearch = <T, S extends keyof T>(
     value: string,
     listSearch: T[],
