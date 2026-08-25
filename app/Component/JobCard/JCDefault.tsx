@@ -1,4 +1,4 @@
-import { JobItem } from "@/app/libs/types";
+import { JobItemShow } from "@/app/libs/types";
 import {
   BriefcaseBusiness,
   CircleDollarSign,
@@ -9,11 +9,11 @@ import { CldImage } from "next-cloudinary";
 import React from "react";
 
 type JCDefaultProps = {
-  job: JobItem;
+  job: JobItemShow;
   lang: "vie" | "eng";
   categoriesMap: Map<string, string>;
   onCategories: (category: Record<string, string | Number>) => void;
-  onJob: (job: JobItem) => void;
+  onJob: (job: JobItemShow) => void;
 };
 
 export default function JCDefault({

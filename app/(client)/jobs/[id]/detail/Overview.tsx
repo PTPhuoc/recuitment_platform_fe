@@ -1,11 +1,11 @@
-import { JobItem } from "@/app/libs/types";
+import { JobItemShow } from "@/app/libs/types";
 import { getStringDate } from "@/app/libs/utils";
 import { BriefcaseBusiness, CircleDollarSign } from "lucide-react";
 import { CldImage } from "next-cloudinary";
 import React from "react";
 
 type PageProps = {
-  job: JobItem;
+  job: JobItemShow;
   lang: "vie" | "eng";
   categoriesMap: Map<string, string>;
 };
@@ -13,16 +13,6 @@ type PageProps = {
 
 // app/(client)/jobs/[id]/detail/Overview.tsx
 export default function Overview({ job, lang, categoriesMap }: PageProps) {
-  const experienceShow =
-    job.require.max_experience > 0 && job.require.min_experience > 0
-      ? job.require.max_experience != job.require.min_experience
-        ? `${job.require.min_experience} - ${job.require.max_experience} năm`
-        : `${job.require.min_experience} năm`
-      : job.require.max_experience > 0
-        ? `${job.require.max_experience} năm`
-        : job.require.min_experience > 0
-          ? `${job.require.min_experience} năm`
-          : "Không yêu cầu kinh nghiệm";
 
   const salaryShow =
     job.require.max_salary > 0 && job.require.min_salary > 0

@@ -1,30 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-type JobItem = {
-  id: string;
-  name: string;
-  company: string
-  company_detail: {
-    name: string;
-    image: string;
-  };
-  source_link: string;
-  description: string;
-  descriptions: string[];
-  require: {
-    id: string;
-    job: string;
-    location: string;
-    form_of_work: string[];
-    educations: string[];
-    industries: string[];
-    min_salary: number;
-    max_salary: number;
-    min_experience: number;
-    max_experience: number;
-  };
-};
+import { JobItem } from "../libs/types";
 
 const fetchLatestJobs = async (limit: number = 3): Promise<JobItem[]> => {
   const response = await axios.get(

@@ -39,8 +39,8 @@ type PageProps = {
   }) => void;
 };
 
-// app/Component/Input/JobSearch.tsx
-export default function JobSearch({
+// app/Component/Input/CompanySearch.tsx
+export default function CompanySearch({
   className,
   value,
   categories,
@@ -121,7 +121,7 @@ export default function JobSearch({
         </div>
         <input
           className="w-full border-b-2 border-blue-default outline-none px-2 duration-200 ease-in hover:border-dark-blue"
-          placeholder="Tên tuyển dụng"
+          placeholder="Tên Công ty"
           value={inputValue.name}
           onChange={(e) => outValue({ ...inputValue, name: e.target.value })}
         />
@@ -134,7 +134,7 @@ export default function JobSearch({
           </div>
           <input
             className="w-full border-b-2 border-blue-default outline-none px-2 duration-200 ease-in hover:border-dark-blue"
-            placeholder="Nghề nghiệp"
+            placeholder="Lĩnh vực"
             onFocus={() => setInputTarget("industry")}
             onBlur={() => {
               setInputTarget("");

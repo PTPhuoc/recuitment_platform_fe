@@ -5,31 +5,7 @@ import { useSelector } from "react-redux";
 import ImageShow from "../ImageShow";
 import { useRouter } from "next/navigation";
 import { cn } from "@/app/libs/utils";
-
-type JobItem = {
-  id: string;
-  name: string;
-  company: string;
-  company_detail: {
-    name: string;
-    image: string;
-  };
-  source_link: string;
-  description: string;
-  descriptions: string[];
-  require: {
-    id: string;
-    job: string;
-    location: string;
-    form_of_work: string[];
-    educations: string[];
-    industries: string[];
-    min_salary: number;
-    max_salary: number;
-    min_experience: number;
-    max_experience: number;
-  };
-};
+import { JobItem } from "@/app/libs/types";
 
 type IndustrieMap = Map<string, string>;
 
@@ -37,10 +13,16 @@ type PageProps = {
   job: JobItem;
   industrieMap: IndustrieMap;
   parentDiv?: string;
+  navigate: (url: string) => void;
 };
 
 // app/Component/JobCard/JCHome.tsx
-export default function JCHome({ job, industrieMap, parentDiv }: PageProps) {
+export default function JCHome({
+  job,
+  industrieMap,
+  parentDiv,
+  navigate,
+}: PageProps) {
   const { lang } = useSelector((state: RootState) => state.web);
   const router = useRouter();
   const nameIndustries =
@@ -74,6 +56,7 @@ export default function JCHome({ job, industrieMap, parentDiv }: PageProps) {
   return (
     <div
       key={job.id}
+      onClick={() => navigate(`/jobs/${job.id}/detail`)}
       className={cn("w-100 max-md:w-80 h-full shrink-0", parentDiv)}
     >
       <div
@@ -134,13 +117,15 @@ export default function JCHome({ job, industrieMap, parentDiv }: PageProps) {
               typeShape="fixed"
             />
           </div>
-          <Link
-            href={`company/detail/${job.company}`}
+          <button
             className="px-3 py-1 rounded-2xl shadow-none duration-200 ease-in-out hover:shadow-default hover:font-bold"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/companies/${job.company}/detail`);
+            }}
           >
             {job.company_detail.name}
-          </Link>
+          </button>
         </div>
       </div>
     </div>

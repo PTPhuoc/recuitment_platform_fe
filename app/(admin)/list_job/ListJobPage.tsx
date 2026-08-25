@@ -5,7 +5,6 @@ import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
 import DatePicker from "@/app/Component/DateSearch";
 import ImageShow from "@/app/Component/ImageShow";
 import InputAddressDefault from "@/app/Component/InputAddressDefault";
-import InputNumberDefault from "@/app/Component/InputNumberDefault";
 import InputSelectDefault from "@/app/Component/InputSelectDefault";
 import InputTextDefault from "@/app/Component/InputTextDefault";
 import InputTextEditer from "@/app/Component/InputTextEditer";
@@ -14,10 +13,11 @@ import { usePopup } from "@/app/Component/Popup";
 import { getNameStatus, getStatus } from "@/app/constants/job/status";
 import { useToast } from "@/app/hook/ToastContext";
 import { useCategories } from "@/app/hook/useCategories";
+import { JobItemEdit, JobItemShow } from "@/app/libs/types";
 import { getStringDate, Relist, validateNumber } from "@/app/libs/utils";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, {  AxiosResponse } from "axios";
 import {
   ArrowDown,
   ArrowUp,
@@ -28,68 +28,8 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-type RequireItem = {
-  id: string;
-  job: string;
-  location: string;
-  quantity: number | undefined;
-  form_of_work: string[];
-  educations: string[];
-  industries: string[];
-  min_salary: number| undefined;
-  max_salary: number| undefined;
-  min_experience: number| undefined;
-  max_experience: number| undefined;
-};
-
-type JobItem = {
-  id: string;
-  company: string;
-  company_detail: {
-    name: string;
-    image: string;
-  };
-  name: string;
-  source_link: string;
-  description: Record<string, any>;
-  status: "pending" | "active" | "ban" | string;
-  date_limited: Date | string | "";
-  date_created: Date | string | "";
-  descriptions: {
-    id: string;
-    job: string;
-    title: string;
-    description: Record<string, any>;
-    index: number;
-  }[];
-  require: RequireItem;
-};
-
-type JobItemGet = {
-  id: string;
-  company: string;
-  company_detail: {
-    name: string;
-    image: string;
-  };
-  name: string;
-  source_link: string;
-  description: Record<string, any>;
-  status: "pending" | "active" | "ban" | string;
-  date_limited: Date | string | "";
-  date_created: Date | string | "";
-  descriptions: {
-    id: string;
-    job: string;
-    title: string;
-    description: string;
-    index: number;
-  }[];
-  require: RequireItem;
-};
 
 type Paginate = {
   page: number;
@@ -97,7 +37,7 @@ type Paginate = {
   count: number | 0;
   next: string | null;
   previous: string | null;
-  results: JobItemGet[];
+  results: JobItemShow[];
   status: "Success";
 } | null;
 
@@ -135,7 +75,7 @@ export default function ListJobPage({
     company: [],
   });
   const [paginate, setPaginate] = useState<Paginate>(initJob);
-  const [jobInfo, setJobInfo] = useState<JobItem>({
+  const [jobInfo, setJobInfo] = useState<JobItemEdit>({
     id: "",
     company: "",
     company_detail: {
@@ -157,6 +97,7 @@ export default function ListJobPage({
       form_of_work: [],
       educations: [],
       industries: [],
+      job_level: [],
       min_salary: 0,
       max_salary: 0,
       min_experience: 0,
@@ -417,6 +358,7 @@ export default function ListJobPage({
         form_of_work: [],
         educations: [],
         industries: [],
+        job_level: [],
         min_salary: 0,
         max_salary: 0,
         min_experience: 0,
@@ -525,6 +467,7 @@ export default function ListJobPage({
                     });
                     setJobInfo({
                       ...item,
+                      description: JSON.parse(item.description),
                       descriptions: descriptions.sort(
                         (a, b) => a.index - b.index,
                       ),
@@ -726,6 +669,21 @@ export default function ListJobPage({
                   setJobInfo({
                     ...jobInfo,
                     require: { ...jobInfo.require, industries: value },
+                  })
+                }
+              />
+              <InputSelectDefault
+                classAll="rounded-lg"
+                className="z-2"
+                classLabel="rounded-md w-40"
+                label="Cấp bật"
+                placeholder="Nhập Cấp bật"
+                listSearch={category.jobLevel}
+                value={jobInfo.require.job_level}
+                outValue={(value) =>
+                  setJobInfo({
+                    ...jobInfo,
+                    require: { ...jobInfo.require, job_level: value },
                   })
                 }
               />

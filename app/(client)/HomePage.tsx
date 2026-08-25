@@ -11,11 +11,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCategories } from "../hook/useCategories";
 import { AppDispatch, RootState } from "../store/store";
 import { setLoad } from "../store/slices/webSlice";
+import { useRouter } from "next/navigation";
 
 // app/(client)/page.tsx
 export default function HomePage() {
   const { lang } = useSelector((state: RootState) => state.web);
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const categories = useCategories(lang);
   const latestJobs = useLatestJobs(3);
 
@@ -86,7 +88,7 @@ export default function HomePage() {
             </div>
             <div className="move-top">
               <Link
-                href="/company"
+                href="/companies"
                 className="w-50 p-3 flex gap-5 items-center justify-center bg-dark-blue text-white rounded-2xl border-2 border-dark-blue duration-200 ease-in shadow-default hover:bg-white hover:text-dark-blue"
                 onClick={() => dispatch(setLoad(true))}
               >
@@ -165,6 +167,10 @@ export default function HomePage() {
                 job={item}
                 industrieMap={industriesMap}
                 parentDiv="move-right"
+                navigate={(url) => {
+                  dispatch(setLoad(true));
+                  router.push(url);
+                }}
               />
             ))}
           </div>
