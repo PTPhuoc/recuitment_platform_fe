@@ -61,24 +61,10 @@ export default function DetailPage({ job }: PageProps) {
         salary: Relist(categories.data.salary),
         exprience: Relist(categories.data.exprience),
       });
+      if (!job) router.push("/");
+      dispatch(setLoad(false));
     }
   }, [categories.data]);
-
-  const locationMap = useMemo(() => {
-    const locationMap = new Map<string, Record<"name" | "parent_id", string>>();
-    category.location.forEach((item) =>
-      locationMap.set(item.value, {
-        name: item.name,
-        parent_id: item.parent_id,
-      }),
-    );
-    return locationMap;
-  }, [categories]);
-
-  useEffect(() => {
-    if (!job) router.push("/");
-    dispatch(setLoad(false));
-  }, [job]);
 
   return (
     <div className="w-full sm:px-5 py-5 flex flex-col sm:gap-5 gap-2">
@@ -141,7 +127,10 @@ export default function DetailPage({ job }: PageProps) {
                 className="max-lg:hidden"
                 company={job.company}
                 company_detail={job.company_detail}
-                onNavigate={(id) => {}}
+                onNavigate={(id) => {
+                  dispatch(setLoad(true));
+                  router.push(`/companies/${id}/detail`);
+                }}
               />
             </div>
           </div>

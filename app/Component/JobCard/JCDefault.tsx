@@ -89,7 +89,7 @@ export default function JCDefault({
       </div>
       <div className="flex flex-wrap w-full items-center gap-2">
         {industries.length > 0 && (
-          <div className="flex max-lg:w-full items-center gap-2 shrink-0 overflow-auto scroll-box">
+          <div className="flex max-lg:w-full items-center gap-2 shrink-0 overflow-auto no-scroll">
             {industries.map((id) => (
               <p
                 key={id}
@@ -107,7 +107,7 @@ export default function JCDefault({
             )}
           </div>
         )}
-        <div className="flex max-lg:w-full items-center gap-2 shrink-0 overflow-auto scroll-box">
+        <div className="flex max-lg:w-full items-center gap-2 shrink-0 overflow-auto no-scroll">
           <div
             className="flex items-center gap-2 px-2 py-1 text-blue-default border border-blue-default rounded-lg duration-200 ease-in hover:bg-blue-default hover:text-white shrink-0"
             onClick={(e) => {

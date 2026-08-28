@@ -22,6 +22,7 @@ type PageProps = {
   companyPaginate: CompanyPaginate;
 };
 
+// app/(client)/companies/page.tsx
 export default function CompaniesPage({
   name,
   location,
@@ -89,13 +90,9 @@ export default function CompaniesPage({
         education: Relist(categories.data.education),
         salary: Relist(categories.data.salary),
         exprience: Relist(categories.data.exprience),
-      });
+      });dispatch(setLoad(false));
     }
   }, [categories.data]);
-
-  useEffect(() => {
-    dispatch(setLoad(false));
-  }, []);
 
   return (
     <div className="flex flex-col w-full sm:gap-5 gap-2">
