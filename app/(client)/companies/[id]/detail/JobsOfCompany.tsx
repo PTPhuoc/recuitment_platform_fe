@@ -27,11 +27,11 @@ export default function JobsOfCompany({
   return (
     <div
       className={cn(
-        "flex flex-col gap-5",
+        "flex flex-col",
         className,
       )}
     >
-      <p className="text-2xl font-bold sm:px-5 px-2">Tuyển dụng của công ty</p>
+      <p className="text-2xl font-bold sm:px-5 px-2 w-full bg-zinc-200">Tuyển dụng của công ty</p>
       <div className="flex-1 flex flex-col gap-5 sm:p-5 p-2 overflow-auto scroll-box">
         {jobs.length > 0 ? (
           jobs.map((job) => (
@@ -41,7 +41,7 @@ export default function JobsOfCompany({
               categoriesMap={categoriesMap}
               lang={lang}
               onCategories={() => {}}
-              onJob={(job) => {
+              onNavigate={(job) => {
                 dispatch(setLoad(true));
                 router.push(`/jobs/${job.id}/detail`);
               }}

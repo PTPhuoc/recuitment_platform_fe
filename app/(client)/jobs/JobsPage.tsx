@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { setLoad } from "@/app/store/slices/webSlice";
 import BG2 from "@/app/svgs/BG2.svg";
 import Image from "next/image";
+import axios from "axios";
 
 type PageProps = {
   jobPaginate: JobPaginate;
@@ -28,15 +29,15 @@ type JobSearchProps = {
   salary: string;
   exprience: string;
   jobLevel: string;
-  formOfWork: string[];
-  education: string[];
+  form_of_work: string[];
+  educations: string[];
 };
 
 type JobFilterProps = {
   salary: boolean;
   exprience: boolean;
   jobLevel: boolean;
-  formOfWork: boolean;
+  form_of_work: boolean;
   education: boolean;
 };
 
@@ -47,21 +48,22 @@ export default function JobsPage({ jobPaginate }: PageProps) {
   const router = useRouter();
   const categories = useCategories(lang);
   const [jobs, setJobs] = useState<JobItemShow[]>(jobPaginate.results);
-  const [jobSearch, setJobSearch] = useState<JobSearchProps>({
+  const [paginate, setPaginate] = useState<JobPaginate>(jobPaginate);
+  const [search, setSearch] = useState<JobSearchProps>({
     name: "",
     location: "",
     industry: "",
     salary: "",
     exprience: "",
     jobLevel: "",
-    formOfWork: [],
-    education: [],
+    form_of_work: [],
+    educations: [],
   });
   const [jobFilter, setJobFilter] = useState<JobFilterProps>({
     salary: false,
     exprience: false,
     jobLevel: false,
-    formOfWork: false,
+    form_of_work: false,
     education: false,
   });
 
@@ -87,6 +89,65 @@ export default function JobsPage({ jobPaginate }: PageProps) {
     return map;
   }, [category]);
 
+  const handleSearch = async (filter: {
+    name?: string;
+    location?: string;
+    industry?: string;
+    salary?: string;
+    exprience?: string;
+    jobLevel?: string;
+    formOfWork?: string[];
+    education?: string[];
+  }) => {
+    const {
+      name,
+      location,
+      industry,
+      salary,
+      exprience,
+      jobLevel,
+      formOfWork,
+      education,
+    } = filter;
+    try {
+      setSearch({
+        name: name ?? search.name,
+        location: location ?? search.location,
+        industry: industry ?? search.industry,
+        salary: salary ?? search.salary,
+        exprience: exprience ?? search.exprience,
+        jobLevel: jobLevel ?? search.jobLevel,
+        form_of_work: formOfWork ?? search.form_of_work,
+        educations: education ?? search.educations,
+      });
+      let params: string[] = [];
+      Object.entries(search).forEach(([key, value]) => {
+        if (
+          (key === "form_of_work" || key === "educations") &&
+          Array.isArray(value) &&
+          value.length > 0
+        ) {
+          value.forEach((item) => params.push(`${key}=${item}`));
+        } else if (!Array.isArray(value) && value !== "") {
+          params.push(`${key}=${value}`);
+        }
+      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}job/many_search/?${params.join("&")}`,
+      );
+      if (response.data.status === "Success") {
+        setJobs(response.data.results);
+        setPaginate(response.data);
+        router.push(`/jobs?${params.join("&")}`, {
+          scroll: false,
+        });
+      }
+      return response.data.status;
+    } catch (error: any) {
+      return error.response.statusText ?? "No response received";
+    }
+  };
+
   useEffect(() => {
     if (categories.data) {
       setCategory({
@@ -104,6 +165,10 @@ export default function JobsPage({ jobPaginate }: PageProps) {
   useEffect(() => {
     dispatch(setLoad(false));
   }, []);
+
+  useEffect(() => {
+    console.log("search", search);
+  }, [search]);
 
   return (
     <div className="flex flex-col w-full">
@@ -129,14 +194,20 @@ export default function JobsPage({ jobPaginate }: PageProps) {
         </div>
         <JobSearch
           className="z-2 sm:w-3/4 w-[90%]"
-          value={jobSearch}
+          value={search}
           categories={{
             industry: category.industry,
             location: category.location,
           }}
-          outValue={(value) => setJobSearch({ ...jobSearch, ...value })}
+          outValue={(value) => setSearch({ ...search, ...value })}
         />
-        <ButtonDefault label="Tìm kiếm" className="w-30 h-15 shadow-default" />
+        <ButtonDefault
+          label="Tìm kiếm"
+          className="w-30 h-15 shadow-default"
+          classLoad="w-30 h-15 shadow-default"
+          classDisabled="w-30 h-15"
+          funsHandle={async () => await handleSearch({ ...search })}
+        />
       </div>
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
@@ -151,26 +222,24 @@ export default function JobsPage({ jobPaginate }: PageProps) {
                   className="rounded-xl"
                   lable="Mức lương"
                   categories={category.salary}
-                  value={jobSearch.salary}
+                  value={search.salary}
                   isOpen={jobFilter.salary}
                   outStatus={(value) =>
                     setJobFilter({ ...jobFilter, salary: value })
                   }
-                  outValue={(value) =>
-                    setJobSearch({ ...jobSearch, salary: value })
-                  }
+                  outValue={(value) => setSearch({ ...search, salary: value })}
                 />
                 <ListSingleFilter
                   className="rounded-xl"
                   lable="Kinh nghiệm"
                   categories={category.exprience}
-                  value={jobSearch.exprience}
+                  value={search.exprience}
                   isOpen={jobFilter.exprience}
                   outStatus={(value) =>
                     setJobFilter({ ...jobFilter, exprience: value })
                   }
                   outValue={(value) =>
-                    setJobSearch({ ...jobSearch, exprience: value })
+                    setSearch({ ...search, exprience: value })
                   }
                 />
                 <ListSingleFilter
@@ -178,25 +247,25 @@ export default function JobsPage({ jobPaginate }: PageProps) {
                   lable="Cấp bật"
                   categories={category.jobLevel}
                   isOpen={jobFilter.jobLevel}
-                  value={jobSearch.jobLevel}
+                  value={search.jobLevel}
                   outStatus={(value) =>
                     setJobFilter({ ...jobFilter, jobLevel: value })
                   }
                   outValue={(value) =>
-                    setJobSearch({ ...jobSearch, jobLevel: value })
+                    setSearch({ ...search, jobLevel: value })
                   }
                 />
                 <ListMultipleFilter
                   className="rounded-xl"
                   lable="Hình thức làm việc"
                   categories={category.formOfWork}
-                  isOpen={jobFilter.formOfWork}
-                  value={jobSearch.formOfWork}
+                  isOpen={jobFilter.form_of_work}
+                  value={search.form_of_work}
                   outStatus={(value) =>
-                    setJobFilter({ ...jobFilter, formOfWork: value })
+                    setJobFilter({ ...jobFilter, form_of_work: value })
                   }
                   outValue={(value) =>
-                    setJobSearch({ ...jobSearch, formOfWork: value })
+                    setSearch({ ...search, form_of_work: value })
                   }
                 />
                 <ListMultipleFilter
@@ -204,12 +273,12 @@ export default function JobsPage({ jobPaginate }: PageProps) {
                   lable="Học vấn"
                   categories={category.education}
                   isOpen={jobFilter.education}
-                  value={jobSearch.education}
+                  value={search.educations}
                   outStatus={(value) =>
                     setJobFilter({ ...jobFilter, education: value })
                   }
                   outValue={(value) =>
-                    setJobSearch({ ...jobSearch, education: value })
+                    setSearch({ ...search, educations: value })
                   }
                 />
               </div>
@@ -223,8 +292,8 @@ export default function JobsPage({ jobPaginate }: PageProps) {
                   job={job}
                   categoriesMap={categoriesMap}
                   lang={lang}
-                  onCategories={() => {}}
-                  onJob={(job) => {
+                  onCategories={(category) => handleSearch({ ...category })}
+                  onNavigate={(job) => {
                     dispatch(setLoad(true));
                     router.push(`/jobs/${job.id}/detail`);
                   }}

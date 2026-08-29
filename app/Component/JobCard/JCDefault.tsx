@@ -12,8 +12,8 @@ type JCDefaultProps = {
   job: JobItemShow;
   lang: "vie" | "eng";
   categoriesMap: Map<string, string>;
-  onCategories: (category: Record<string, string | Number>) => void;
-  onJob: (job: JobItemShow) => void;
+  onCategories: (category: Record<string, string>) => void;
+  onNavigate: (job: JobItemShow) => void;
 };
 
 export default function JCDefault({
@@ -21,7 +21,7 @@ export default function JCDefault({
   categoriesMap,
   lang,
   onCategories,
-  onJob,
+  onNavigate,
 }: JCDefaultProps) {
   const industries = job.require.industries?.slice(0, 3);
   const experienceShow =
@@ -30,9 +30,9 @@ export default function JCDefault({
         ? `${job.require.min_experience} - ${job.require.max_experience} năm`
         : `${job.require.min_experience} năm`
       : job.require.max_experience > 0
-        ? `${job.require.max_experience} năm`
+        ? `Tối đa ${job.require.max_experience} năm`
         : job.require.min_experience > 0
-          ? `${job.require.min_experience} năm`
+          ? `Ít nhất ${job.require.min_experience} năm`
           : "Không yêu cầu kinh nghiệm";
 
   const salaryShow =
@@ -48,7 +48,7 @@ export default function JCDefault({
   return (
     <div
       className="group flex flex-col p-2 gap-2 rounded-2xl border-2 border-blue-default min-w-0 shadow-none scale-100 duration-200 ease-in cursor-pointer hover:shadow-default hover:scale-[1.01]"
-      onClick={() => onJob(job)}
+      onClick={() => onNavigate(job)}
     >
       <div className="flex gap-5">
         <div className="relative w-30 h-30 rounded-lg shadow overflow-hidden shrink-0">
@@ -93,10 +93,10 @@ export default function JCDefault({
             {industries.map((id) => (
               <p
                 key={id}
-                className="text-blue-default px-2 py-1 border border-blue-default rounded-lg shrink-0 duration-200 ease-in hover:bg-blue-default hover:text-white"
+                className="text-blue-default px-2 sm:py-1 border border-blue-default rounded-lg shrink-0 duration-200 ease-in hover:bg-blue-default hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onCategories({ industries: id });
+                  onCategories({ industry: id });
                 }}
               >
                 {categoriesMap.get(id)}
@@ -109,12 +109,12 @@ export default function JCDefault({
         )}
         <div className="flex max-lg:w-full items-center gap-2 shrink-0 overflow-auto no-scroll">
           <div
-            className="flex items-center gap-2 px-2 py-1 text-blue-default border border-blue-default rounded-lg duration-200 ease-in hover:bg-blue-default hover:text-white shrink-0"
+            className="flex items-center gap-2 px-2 sm:py-1 text-blue-default border border-blue-default rounded-lg duration-200 ease-in hover:bg-blue-default hover:text-white shrink-0"
             onClick={(e) => {
               e.stopPropagation();
               onCategories({
-                min_experience: job.require.min_experience,
-                max_experience: job.require.max_experience,
+                min_experience: job.require.min_experience.toString(),
+                max_experience: job.require.max_experience.toString(),
               });
             }}
           >
@@ -122,7 +122,7 @@ export default function JCDefault({
             <p>{experienceShow}</p>
           </div>
           <div
-            className="flex items-center gap-2 px-2 py-1 text-blue-default border border-blue-default rounded-lg duration-200 ease-in hover:bg-blue-default hover:text-white shrink-0"
+            className="flex items-center gap-2 px-2 sm:py-1 text-blue-default border border-blue-default rounded-lg duration-200 ease-in hover:bg-blue-default hover:text-white shrink-0"
             onClick={(e) => {
               e.stopPropagation();
               onCategories({ location: job.require.location });

@@ -2,194 +2,227 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+const allSelect = {
+  id: "",
+  slug: "",
+  translations: [
+    {
+      id: "category_trans_0",
+      language_code: "vie",
+      name: "Tất cả",
+    },
+    {
+      id: "category_trans_1",
+      language_code: "eng",
+      name: "All",
+    },
+  ],
+} as const;
+
 const salaryCategories = [
   {
-    id: "salary_1",
+    id: "",
+    slug: "",
+    translations: [
+      {
+        id: "salary_trans_0",
+        language_code: "vie",
+        name: "Tất cả",
+      },
+      {
+        id: "salary_trans_1",
+        language_code: "eng",
+        name: "All",
+      },
+    ],
+  },
+  {
+    id: "0",
     slug: "0",
     translations: [
       {
-        id: "salary_trans_1",
+        id: "salary_trans_2",
         language_code: "vie",
         name: "Thỏa thuận",
       },
       {
-        id: "salary_trans_2",
+        id: "salary_trans_3",
         language_code: "eng",
         name: "Negotiate",
       },
     ],
   },
   {
-    id: "salary_2",
+    id: "+5000000",
     slug: "+5000000",
     translations: [
       {
-        id: "salary_trans_3",
+        id: "salary_trans_4",
         language_code: "vie",
         name: "Dưới 5 triệu",
       },
       {
-        id: "salary_trans_4",
+        id: "salary_trans_5",
         language_code: "eng",
         name: "Under 5 million",
       },
     ],
   },
   {
-    id: "salary_3",
+    id: "5000000-10000000",
     slug: "5000000-10000000",
     translations: [
       {
-        id: "salary_trans_5",
+        id: "salary_trans_6",
         language_code: "vie",
         name: "5 - 10 triệu",
       },
       {
-        id: "salary_trans_6",
+        id: "salary_trans_7",
         language_code: "eng",
         name: "5 - 10 million",
       },
     ],
   },
   {
-    id: "salary_4",
+    id: "10000000-15000000",
     slug: "10000000-15000000",
     translations: [
       {
-        id: "salary_trans_7",
+        id: "salary_trans_8",
         language_code: "vie",
         name: "10 - 15 triệu",
       },
       {
-        id: "salary_trans_8",
+        id: "salary_trans_9",
         language_code: "eng",
         name: "10 - 15 million",
       },
     ],
   },
   {
-    id: "salary_5",
+    id: "15000000-20000000",
     slug: "15000000-20000000",
     translations: [
       {
-        id: "salary_trans_9",
+        id: "salary_trans_10",
         language_code: "vie",
         name: "15 - 20 triệu",
       },
       {
-        id: "salary_trans_10",
+        id: "salary_trans_11",
         language_code: "eng",
         name: "15 - 20 million",
       },
     ],
   },
   {
-    id: "salary_6",
+    id: "20000000-25000000",
     slug: "20000000-25000000",
     translations: [
       {
-        id: "salary_trans_11",
+        id: "salary_trans_12",
         language_code: "vie",
         name: "20 - 25 triệu",
       },
       {
-        id: "salary_trans_12",
+        id: "salary_trans_13",
         language_code: "eng",
         name: "20 - 25 million",
       },
     ],
   },
   {
-    id: "salary_7",
+    id: "25000000-30000000",
     slug: "25000000-30000000",
     translations: [
       {
-        id: "salary_trans_13",
+        id: "salary_trans_14",
         language_code: "vie",
         name: "25 - 30 triệu",
       },
       {
-        id: "salary_trans_14",
+        id: "salary_trans_15",
         language_code: "eng",
         name: "25 - 30 million",
       },
     ],
   },
   {
-    id: "salary_8",
+    id: "30000000-35000000",
     slug: "30000000-35000000",
     translations: [
       {
-        id: "salary_trans_15",
+        id: "salary_trans_16",
         language_code: "vie",
         name: "30 - 35 triệu",
       },
       {
-        id: "salary_trans_16",
+        id: "salary_trans_17",
         language_code: "eng",
         name: "30 - 35 million",
       },
     ],
   },
   {
-    id: "salary_9",
+    id: "35000000-40000000",
     slug: "35000000-40000000",
     translations: [
       {
-        id: "salary_trans_17",
+        id: "salary_trans_18",
         language_code: "vie",
         name: "35 - 40 triệu",
       },
       {
-        id: "salary_trans_18",
+        id: "salary_trans_19",
         language_code: "eng",
         name: "35 - 40 million",
       },
     ],
   },
   {
-    id: "salary_10",
+    id: "40000000-45000000",
     slug: "40000000-45000000",
     translations: [
       {
-        id: "salary_trans_19",
+        id: "salary_trans_20",
         language_code: "vie",
         name: "40 - 45 triệu",
       },
       {
-        id: "salary_trans_20",
+        id: "salary_trans_21",
         language_code: "eng",
         name: "40 - 45 million",
       },
     ],
   },
   {
-    id: "salary_11",
+    id: "45000000-50000000",
     slug: "45000000-50000000",
     translations: [
       {
-        id: "salary_trans_21",
+        id: "salary_trans_22",
         language_code: "vie",
         name: "45 - 50 triệu",
       },
       {
-        id: "salary_trans_22",
+        id: "salary_trans_23",
         language_code: "eng",
         name: "45 - 50 million",
       },
     ],
   },
   {
-    id: "salary_12",
+    id: "50000000+",
     slug: "50000000+",
     translations: [
       {
-        id: "salary_trans_23",
+        id: "salary_trans_24",
         language_code: "vie",
         name: "Trên 50 triệu",
       },
       {
-        id: "salary_trans_24",
+        id: "salary_trans_25",
         language_code: "eng",
         name: "Over 50 million",
       },
@@ -199,7 +232,23 @@ const salaryCategories = [
 
 const exprienceCategories = [
   {
-    id: "exp_1",
+    id: "",
+    slug: "",
+    translations: [
+      {
+        id: "exp_trans_0",
+        language_code: "vie",
+        name: "Tất cả",
+      },
+      {
+        id: "exp_trans_0",
+        language_code: "eng",
+        name: "All",
+      },
+    ],
+  },
+  {
+    id: "0",
     slug: "0",
     translations: [
       {
@@ -215,7 +264,7 @@ const exprienceCategories = [
     ],
   },
   {
-    id: "exp_2",
+    id: "1",
     slug: "1",
     translations: [
       {
@@ -231,7 +280,7 @@ const exprienceCategories = [
     ],
   },
   {
-    id: "exp_3",
+    id: "2",
     slug: "2",
     translations: [
       {
@@ -247,7 +296,7 @@ const exprienceCategories = [
     ],
   },
   {
-    id: "exp_4",
+    id: "3",
     slug: "3",
     translations: [
       {
@@ -263,7 +312,7 @@ const exprienceCategories = [
     ],
   },
   {
-    id: "exp_5",
+    id: "4",
     slug: "4",
     translations: [
       {
@@ -279,7 +328,7 @@ const exprienceCategories = [
     ],
   },
   {
-    id: "exp_6",
+    id: "5",
     slug: "5+",
     translations: [
       {
@@ -357,7 +406,7 @@ const fetchCategories = async (
       industry: categories.industry,
       location: categories.location,
       formOfWork: categories.form_of_work,
-      jobLevel: categories.job_level,
+      jobLevel: [allSelect, ...categories.job_level],
       education: categories.education,
       company: categories.company,
       salary: salaryCategories.map((item) => ({

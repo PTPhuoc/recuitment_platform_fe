@@ -2,21 +2,23 @@ import { CompanyItemShow } from "@/app/libs/types";
 import { cn } from "@/app/libs/utils";
 import { BriefcaseBusiness, MapPin, SquareArrowOutUpRight } from "lucide-react";
 import { CldImage } from "next-cloudinary";
-import React from "react";
 
 type PageProps = {
   className?: string;
   company: CompanyItemShow;
   locaMap: Map<string, Record<string, string>>;
   categoriesMap: Map<string, string>;
+  onCategories: (category: Record<string, string>) => void
   onNavigate: (id: string) => void;
 };
 
+// app/Component/CompanyCard/CCDefault.tsx
 export default function CCDefault({
   className,
   company,
   locaMap,
   categoriesMap,
+  onCategories,
   onNavigate,
 }: PageProps) {
   const fullLocation = (location: string[]) => {
@@ -45,7 +47,7 @@ export default function CCDefault({
     <div
       key={company.id}
       className={cn(
-        "flex items-center gap-5 bg-white border-2 border-white sm:rounded-2xl p-3 cursor-pointer duration-200 ease-in hover:border-blue-default hover:shadow-default active:border-blue-default hover:scale-[1.01] active:shadow-default",
+        "flex items-center gap-5 bg-white border-2 border-blue-default rounded-xl p-3 cursor-pointer duration-200 ease-in hover:border-dark-blue hover:shadow-default active:border-dark-blue hover:scale-[1.01] active:shadow-default",
         className,
       )}
       onClick={(e) => {
@@ -96,8 +98,9 @@ export default function CCDefault({
           <MapPin className="w-5 h-5 shrink-0" />
           {fullLocation(company.locations).map((loc, index) => (
             <div
-              className="flex w-full gap-2 items-center overflow-auto no-scroll"
+              className="flex w-full gap-2 items-center overflow-auto no-scroll duration-200 ease-in hover:font-bold active:font-bold"
               key={index}
+              onClick={(e) => {e.stopPropagation(); onCategories({location: loc})}}
             >
               <p>{loc}</p>
               {index + 1 < fullLocation(company.locations).length && <p> | </p>}
@@ -114,6 +117,7 @@ export default function CCDefault({
                   className="text-blue-default px-2 border border-blue-default rounded-lg shrink-0 duration-200 ease-in hover:bg-blue-default hover:text-white"
                   onClick={(e) => {
                     e.stopPropagation();
+                    onCategories({industry: id});
                   }}
                 >
                   {categoriesMap.get(id)}
