@@ -27,7 +27,7 @@ type JobSearchProps = {
   location: string;
   industry: string;
   salary: string;
-  exprience: string;
+  experience: string;
   jobLevel: string;
   form_of_work: string[];
   educations: string[];
@@ -54,7 +54,7 @@ export default function JobsPage({ jobPaginate }: PageProps) {
     location: "",
     industry: "",
     salary: "",
-    exprience: "",
+    experience: "",
     jobLevel: "",
     form_of_work: [],
     educations: [],
@@ -89,37 +89,8 @@ export default function JobsPage({ jobPaginate }: PageProps) {
     return map;
   }, [category]);
 
-  const handleSearch = async (filter: {
-    name?: string;
-    location?: string;
-    industry?: string;
-    salary?: string;
-    exprience?: string;
-    jobLevel?: string;
-    formOfWork?: string[];
-    education?: string[];
-  }) => {
-    const {
-      name,
-      location,
-      industry,
-      salary,
-      exprience,
-      jobLevel,
-      formOfWork,
-      education,
-    } = filter;
+  const handleSearch = async () => {
     try {
-      setSearch({
-        name: name ?? search.name,
-        location: location ?? search.location,
-        industry: industry ?? search.industry,
-        salary: salary ?? search.salary,
-        exprience: exprience ?? search.exprience,
-        jobLevel: jobLevel ?? search.jobLevel,
-        form_of_work: formOfWork ?? search.form_of_work,
-        educations: education ?? search.educations,
-      });
       let params: string[] = [];
       Object.entries(search).forEach(([key, value]) => {
         if (
@@ -146,6 +117,46 @@ export default function JobsPage({ jobPaginate }: PageProps) {
     } catch (error: any) {
       return error.response.statusText ?? "No response received";
     }
+  };
+
+  const handleFilter = (filter: {
+    name?: string;
+    location?: string;
+    industry?: string;
+    salary?: string;
+    experience?: string;
+    jobLevel?: string;
+    formOfWork?: string;
+    education?: string;
+  }) => {
+    const {
+      name,
+      location,
+      industry,
+      salary,
+      experience,
+      jobLevel,
+      formOfWork,
+      education,
+    } = filter;
+    setSearch({
+      name: name ?? search.name,
+      location: location ?? search.location,
+      industry: industry ?? search.industry,
+      salary: salary ?? search.salary,
+      experience: experience ?? search.experience,
+      jobLevel: jobLevel ?? search.jobLevel,
+      form_of_work: formOfWork
+        ? !search.form_of_work.includes(formOfWork)
+          ? [...search.form_of_work, formOfWork]
+          : search.form_of_work
+        : search.form_of_work,
+      educations: education
+        ? !search.educations.includes(education)
+          ? [...search.educations, education]
+          : search.educations
+        : search.educations,
+    });
   };
 
   useEffect(() => {
@@ -206,7 +217,7 @@ export default function JobsPage({ jobPaginate }: PageProps) {
           className="w-30 h-15 shadow-default"
           classLoad="w-30 h-15 shadow-default"
           classDisabled="w-30 h-15"
-          funsHandle={async () => await handleSearch({ ...search })}
+          funsHandle={async () => await handleSearch()}
         />
       </div>
       <div className="flex w-full items-stretch">
@@ -233,13 +244,13 @@ export default function JobsPage({ jobPaginate }: PageProps) {
                   className="rounded-xl"
                   lable="Kinh nghiệm"
                   categories={category.exprience}
-                  value={search.exprience}
+                  value={search.experience}
                   isOpen={jobFilter.exprience}
                   outStatus={(value) =>
                     setJobFilter({ ...jobFilter, exprience: value })
                   }
                   outValue={(value) =>
-                    setSearch({ ...search, exprience: value })
+                    setSearch({ ...search, experience: value })
                   }
                 />
                 <ListSingleFilter
@@ -292,7 +303,7 @@ export default function JobsPage({ jobPaginate }: PageProps) {
                   job={job}
                   categoriesMap={categoriesMap}
                   lang={lang}
-                  onCategories={(category) => handleSearch({ ...category })}
+                  onCategories={(category) => handleFilter({ ...category })}
                   onNavigate={(job) => {
                     dispatch(setLoad(true));
                     router.push(`/jobs/${job.id}/detail`);

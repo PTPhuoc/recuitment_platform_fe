@@ -5,10 +5,11 @@ import { setRole, setUser } from "@/app/store/slices/authSlice";
 import { setLoad } from "@/app/store/slices/webSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { getOrRefresh } from "@/app/store/Thunks/authThuk";
-import { UserCircle } from "lucide-react";
+import { Menu, UserCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import LeftHeadClient from "./LeftHeadClient";
 
 type PageProps = {
   className?: string;
@@ -20,6 +21,7 @@ export default function HeadHomeClient({ className }: PageProps) {
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (user.id) return;
@@ -35,11 +37,18 @@ export default function HeadHomeClient({ className }: PageProps) {
   return (
     <div
       className={cn(
-        "flex w-full z-10 h-20 max-sm:h-15 justify-between items-center px-10 py-2 bg-white shadow-default shrink-0",
+        "flex w-full z-10 h-20 max-sm:h-15 justify-between items-center psm:x-10 px-5 py-2 bg-white shadow-default shrink-0",
         className,
       )}
     >
-      <div className="flex items-center gap-10">
+      <LeftHeadClient isOpen={isOpen} onActive={setIsOpen} />
+      <div className="flex items-center sm:gap-10 gap-5">
+        <button
+          className="cursor-pointer sm:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <Menu className="text-dark-blue w-8 h-8" />
+        </button>
         <button
           className="px-3 rounded-2xl"
           disabled={pathname === "/"}

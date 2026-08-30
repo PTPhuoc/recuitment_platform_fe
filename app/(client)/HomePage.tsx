@@ -139,9 +139,9 @@ export default function HomePage() {
       </div>
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
-        <div className="flex max-sm:flex-col flex-9 h-100 max-lg:h-110 max-sm:h-auto min-w-0 items-stretch shrink-0 bg-white">
-          <div className="flex-1 p-5 gap-5 flex flex-col items-start">
-            <h1 className="text-7xl font-bold text-dim-blue drop">
+        <div className="flex max-sm:flex-col sm:gap-5 flex-9 min-w-0 items-stretch shrink-0 bg-white">
+          <div className="sm:flex-1 sm:p-5 p-2 sm:gap-5 gap-2 flex flex-col items-start min-h-0 overflow-hidden">
+            <h1 className="sm:text-7xl text-5xl font-bold text-dim-blue drop">
               New opportunities for you
             </h1>
             <p className="flex-1 font-bold text-zinc-500 drop">
@@ -160,7 +160,7 @@ export default function HomePage() {
             </div>
           </div>
           <span className="w-1 h-full bg-dark-blue move-right max-md:hidden"></span>
-          <div className="flex-3 flex p-5 gap-5 items-stretch overflow-auto no-scroll">
+          <div className="flex-3 flex  sm:p-5 p-2 sm:gap-5 gap-2 items-stretch overflow-auto no-scroll">
             {latestJobs.data?.map((item) => (
               <JCHome
                 key={item.id}

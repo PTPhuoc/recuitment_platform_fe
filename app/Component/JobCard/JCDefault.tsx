@@ -68,7 +68,7 @@ export default function JCDefault({
           <p className="text-2xl font-bold line-clamp-2">{job.name}</p>
           <div className="flex gap-2 items-center text-dim-blue">
             <CircleDollarSign className="w-5 h-5" />
-            <p className="text-dark-blue duration-200 ease-in hover:text-blue-default hover:font-bold">
+            <p className="text-dark-blue">
               {salaryShow}
             </p>
           </div>
@@ -76,7 +76,8 @@ export default function JCDefault({
             <BriefcaseBusiness className="w-5 h-5 text-dim-blue" />
             {job.require.form_of_work.map((item, index) => (
               <React.Fragment key={item}>
-                <div className="duration-200 ease-in hover:text-blue-default hover:font-bold">
+                <div className="text-dark-blue cursor-pointer duration-200 ease-in hover:text-blue-default hover:font-bold"
+                onClick={e => {e.stopPropagation(); onCategories({formOfWork: item})}}>
                   {categoriesMap.get(item)}
                 </div>
                 {index + 1 < job.require.form_of_work.length && (
@@ -113,8 +114,7 @@ export default function JCDefault({
             onClick={(e) => {
               e.stopPropagation();
               onCategories({
-                min_experience: job.require.min_experience.toString(),
-                max_experience: job.require.max_experience.toString(),
+                experience: (job.require.max_experience - job.require.min_experience).toString(),
               });
             }}
           >
