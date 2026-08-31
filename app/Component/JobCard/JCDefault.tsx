@@ -2,10 +2,12 @@ import { JobItemShow } from "@/app/libs/types";
 import {
   BriefcaseBusiness,
   CircleDollarSign,
+  LinkIcon,
   MapPin,
   UserRoundCog,
 } from "lucide-react";
 import { CldImage } from "next-cloudinary";
+import Link from "next/link";
 import React from "react";
 
 type JCDefaultProps = {
@@ -61,23 +63,40 @@ export default function JCDefault({
             fill
           />
         </div>
-        <div className="flex flex-col min-w-0">
-          <p className="text-zinc-400 font-bold truncate">
-            {job.company_detail.name}
-          </p>
+        <div className="flex flex-col w-full min-w-0">
+          <div className="flex items-center justify-between">
+            <p className="text-zinc-400 font-bold truncate">
+              {job.company_detail.name}
+            </p>
+            {job.source_link && (
+              <Link
+                href={job.source_link}
+                target="_blank"
+                className="text-blue-default cursor-pointer duration-200 ease-in-out hover:text-dark-blue active:text-dark-blue"
+                title="Original Post"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <LinkIcon className="w-5 h-5" />
+              </Link>
+            )}
+          </div>
+
           <p className="text-2xl font-bold line-clamp-2">{job.name}</p>
           <div className="flex gap-2 items-center text-dim-blue">
             <CircleDollarSign className="w-5 h-5" />
-            <p className="text-dark-blue">
-              {salaryShow}
-            </p>
+            <p className="text-dark-blue">{salaryShow}</p>
           </div>
           <div className="flex gap-2 items-center">
             <BriefcaseBusiness className="w-5 h-5 text-dim-blue" />
             {job.require.form_of_work.map((item, index) => (
               <React.Fragment key={item}>
-                <div className="text-dark-blue cursor-pointer duration-200 ease-in hover:text-blue-default hover:font-bold"
-                onClick={e => {e.stopPropagation(); onCategories({formOfWork: item})}}>
+                <div
+                  className="text-dark-blue cursor-pointer duration-200 ease-in hover:text-blue-default hover:font-bold"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCategories({ formOfWork: item });
+                  }}
+                >
                   {categoriesMap.get(item)}
                 </div>
                 {index + 1 < job.require.form_of_work.length && (
@@ -114,7 +133,9 @@ export default function JCDefault({
             onClick={(e) => {
               e.stopPropagation();
               onCategories({
-                experience: (job.require.max_experience - job.require.min_experience).toString(),
+                experience: (
+                  job.require.max_experience - job.require.min_experience
+                ).toString(),
               });
             }}
           >

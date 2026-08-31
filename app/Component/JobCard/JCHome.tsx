@@ -5,12 +5,12 @@ import { useSelector } from "react-redux";
 import ImageShow from "../ImageShow";
 import { useRouter } from "next/navigation";
 import { cn } from "@/app/libs/utils";
-import { JobItem } from "@/app/libs/types";
+import { JobItemShow } from "@/app/libs/types";
 
 type IndustrieMap = Map<string, string>;
 
 type PageProps = {
-  job: JobItem;
+  job: JobItemShow;
   industrieMap: IndustrieMap;
   parentDiv?: string;
   navigate: (url: string) => void;
