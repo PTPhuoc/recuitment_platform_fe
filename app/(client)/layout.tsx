@@ -1,6 +1,7 @@
 import React from "react";
 import HeadHomeClient from "../Component/NavigationBar/HeadHomeClient";
 import LoaderPage from "../Component/LoaderPage";
+import Footer from "./Footer";
 
 // app/(client)/layout.tsx
 export default async function AdminLayout({
@@ -9,10 +10,13 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center h-screen overflow-auto scroll-box">
+    <div className="flex flex-col gap-5 items-center h-screen overflow-auto scroll-box">
       <LoaderPage />
-      <HeadHomeClient />
-      {children}
+      <div className="flex flex-col w-full min-w-0">
+        <HeadHomeClient />
+        {children}
+      </div>
+      <Footer />
     </div>
   );
 }

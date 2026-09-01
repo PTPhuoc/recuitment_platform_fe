@@ -83,7 +83,7 @@ export default function DetailPage({
   }, [categories.data]);
 
   return (
-    <div className="flex flex-col w-full sm:gap-5 sm:p-5 gap-2">
+    <div className="flex flex-col w-full sm:gap-5 sm:px-5 gap-2">
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
         <div className="relative flex-8 lg:h-screen flex flex-col bg-white sm:rounded-2xl sm:gap-5 gap-2 overflow-hidden">

@@ -67,7 +67,7 @@ export default function DetailPage({ job }: PageProps) {
   }, [categories.data]);
 
   return (
-    <div className="w-full sm:px-5 py-5 flex flex-col sm:gap-5 gap-2">
+    <div className="w-full sm:px-5 flex flex-col sm:gap-5 gap-2">
       <div className="w-full flex items-stretch">
         <div className="flex-1 max-sm:hidden"></div>
         <div className="flex-8 flex sm:gap-5 gap-2 max-lg:flex-col">

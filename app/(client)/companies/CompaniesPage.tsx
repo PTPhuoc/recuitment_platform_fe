@@ -182,7 +182,7 @@ export default function CompaniesPage({
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
         {companies.length > 0 ? (
-          <div className=" flex-8 grid lg:grid-cols-2 grid-cols-1 grid-rows-5 gap-5 sm:p-5 p-2 h-screen min-h-200 items-start bg-white border-2 border-dashed sm:rounded-2xl shadow-default">
+          <div className=" flex-8 grid lg:grid-cols-2 grid-cols-1 grid-rows-5 gap-5 sm:p-5 p-2 h-screen min-h-200 items-start bg-white border-2 border-dashed lg:rounded-2xl shadow-default">
             {companies.map((item) => (
               <CCDefault
                 company={item}

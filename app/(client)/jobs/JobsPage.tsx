@@ -184,12 +184,8 @@ export default function JobsPage({ jobPaginate }: PageProps) {
     dispatch(setLoad(false));
   }, []);
 
-  useEffect(() => {
-    console.log("search", search);
-  }, [search]);
-
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full sm:gap-5">
       <div className="relative flex flex-col sm:gap-5 gap-2 items-center justify-center w-full h-100">
         <Image
           src={BG2}
@@ -229,7 +225,7 @@ export default function JobsPage({ jobPaginate }: PageProps) {
       </div>
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
-        <div className="flex gap-5 sm:p-5 flex-8">
+        <div className="flex gap-5 sm:px-5 flex-8">
           <div className="flex-1 flex flex-col gap-5 max-sm:hidden">
             <div className="sticky top-3 py-3 flex flex-col gap-3 w-full rounded-2xl bg-white shadow-default overflow-hidden">
               <h2 className="text-3xl font-bold text-blue-default px-5">
