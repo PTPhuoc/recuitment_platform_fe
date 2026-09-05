@@ -18,6 +18,7 @@ import BG2 from "@/app/svgs/BG2.svg";
 import Image from "next/image";
 import axios from "axios";
 import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
+import useIntersectionObserver from "@/app/hook/useIntersectionObserver";
 
 type PageProps = {
   jobPaginate: JobPaginate;
@@ -181,6 +182,15 @@ export default function JobsPage({ jobPaginate }: PageProps) {
   }, [categories.data]);
 
   useEffect(() => {
+    const move = useIntersectionObserver({
+      target: ["move-top", "move-bottom", "drop"],
+      insert: "perform",
+      threshold: 0,
+    });
+    return () => move.disconnect();
+  }, []);
+
+  useEffect(() => {
     dispatch(setLoad(false));
   }, []);
 
@@ -195,19 +205,19 @@ export default function JobsPage({ jobPaginate }: PageProps) {
           loading="eager"
         />
         <div className="z-3 flex flex-col py-1 rounded-full items-center">
-          <p className="text-7xl max-sm:text-6xl font-bold text-dark-blue text-center">
+          <p className="text-7xl max-sm:text-6xl font-bold text-dark-blue text-center move-bottom">
             Find <span className="max-lg:hidden">Your Dream</span> Job
           </p>
-          <p className="text-2xl font-bold text-dim-blue text-center max-lg:hidden">
+          <p className="text-2xl font-bold text-dim-blue text-center max-lg:hidden move-bottom">
             Explore thousands of opportunities and find the job that fits your
             future.
           </p>
-          <p className="text-2xl font-bold text-dim-blue text-center lg:hidden">
+          <p className="text-2xl font-bold text-dim-blue text-center lg:hidden move-bottom">
             Your next career move starts here
           </p>
         </div>
         <JobSearch
-          className="z-2 sm:w-3/4 w-[90%]"
+          className="z-2 sm:w-3/4 w-[90%] move-bottom"
           value={search}
           categories={{
             industry: category.industry,
@@ -215,19 +225,21 @@ export default function JobsPage({ jobPaginate }: PageProps) {
           }}
           outValue={(value) => setSearch({ ...search, ...value })}
         />
-        <ButtonDefault
-          label="Tìm kiếm"
-          className="w-30 h-15 shadow-default"
-          classLoad="w-30 h-15 shadow-default"
-          classDisabled="w-30 h-15"
-          funsHandle={async () => await handleSearch()}
-        />
+        <div className="move-bottom">
+          <ButtonDefault
+            label="Tìm kiếm"
+            className="w-30 h-15 shadow-default move-bottom"
+            classLoad="w-30 h-15 shadow-default"
+            classDisabled="w-30 h-15 move-bottom"
+            funsHandle={async () => await handleSearch()}
+          />
+        </div>
       </div>
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
         <div className="flex gap-5 sm:px-5 flex-8">
           <div className="flex-1 flex flex-col gap-5 max-sm:hidden">
-            <div className="sticky top-3 py-3 flex flex-col gap-3 w-full rounded-2xl bg-white shadow-default overflow-hidden">
+            <div className="sticky top-3 py-3 flex flex-col gap-3 w-full rounded-2xl bg-white shadow-default overflow-hidden move-top">
               <h2 className="text-3xl font-bold text-blue-default px-5">
                 Bộ lọc
               </h2>
@@ -298,7 +310,7 @@ export default function JobsPage({ jobPaginate }: PageProps) {
               </div>
             </div>
           </div>
-          <div className="relative flex-2 flex flex-col ms:p-5 p-3 sm:gap-3 gap-2 bg-white border-2 border-dashed border-dark-blue sm:rounded-2xl shadow-default">
+          <div className="relative flex-2 flex flex-col ms:p-5 p-3 sm:gap-3 gap-2 bg-white border-2 border-dashed border-dark-blue sm:rounded-2xl shadow-default move-top">
             <div
               className={`absolute z-1 top-0 left-0 flex flex-col gap-3 px-3 w-full bg-white overflow-auto scroll-box duration-200 ease-in-out ${isFilter ? "h-full min-h-200" : "h-0 min-h-0"}`}
             >
@@ -368,7 +380,7 @@ export default function JobsPage({ jobPaginate }: PageProps) {
               />
             </div>
             <button
-              className="z-2 flex items-center gap-5 p-2 bg-white border-2 border-blue-default rounded-xl sm:hidden duration-200 ease-in hover:bg-blue-default hover:text-white hover:shadow-default active:bg-blue-default active:text-white"
+              className="z-1 flex items-center gap-5 p-2 bg-white border-2 border-blue-default rounded-xl sm:hidden duration-200 ease-in hover:bg-blue-default hover:text-white hover:shadow-default active:bg-blue-default active:text-white"
               onClick={() => setIsFilter(!isFilter)}
             >
               <Funnel className="w-5 h-5" />

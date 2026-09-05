@@ -1,10 +1,11 @@
 import { JobItemShow } from "@/app/libs/types";
-import { getStringDate } from "@/app/libs/utils";
+import { cn, getStringDate } from "@/app/libs/utils";
 import { BriefcaseBusiness, CircleDollarSign } from "lucide-react";
 import { CldImage } from "next-cloudinary";
 import React from "react";
 
 type PageProps = {
+  className?: string;
   job: JobItemShow;
   lang: "vie" | "eng";
   categoriesMap: Map<string, string>;
@@ -12,7 +13,7 @@ type PageProps = {
 
 
 // app/(client)/jobs/[id]/detail/Overview.tsx
-export default function Overview({ job, lang, categoriesMap }: PageProps) {
+export default function Overview({ className, job, lang, categoriesMap }: PageProps) {
 
   const salaryShow =
     job.require.max_salary > 0 && job.require.min_salary > 0
@@ -26,7 +27,7 @@ export default function Overview({ job, lang, categoriesMap }: PageProps) {
           : "Thỏa thuận";
 
   return (
-    <div className="flex gap-5 bg-white p-5 sm:rounded-2xl items-center">
+    <div className={cn("flex gap-5 bg-white p-5 sm:rounded-2xl items-center", className)}>
       <div className="relative sm:w-35 sm:h-35 w-20 h-20 shadow-default sm:rounded-lg overflow-hidden">
         <CldImage
           src={job.company_detail.image}

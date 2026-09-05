@@ -10,7 +10,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-5 items-center h-screen overflow-auto scroll-box">
+    <div className="flex flex-col sm:gap-5 gap-2 items-center h-screen overflow-auto scroll-box">
       <LoaderPage />
       <div className="flex flex-col w-full min-w-0">
         <HeadHomeClient />

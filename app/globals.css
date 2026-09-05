@@ -247,7 +247,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 @utility move-top {
-  transform: translate(0, 50%);
+  transform: translate(0, 10%);
   opacity: 0;
 }
 
@@ -262,7 +262,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 @utility move-bottom {
-  transform: translate(0, -50%);
+  transform: translate(0, -10%);
   opacity: 0;
 }
 

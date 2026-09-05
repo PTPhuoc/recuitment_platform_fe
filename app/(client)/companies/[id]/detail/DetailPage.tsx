@@ -13,6 +13,7 @@ import { CldImage } from "next-cloudinary";
 import { SquareArrowOutUpRight, SquareArrowUpRight } from "lucide-react";
 import Desciption from "./Desciption";
 import JobsOfCompany from "./JobsOfCompany";
+import useIntersectionObserver from "@/app/hook/useIntersectionObserver";
 
 type PageProps = {
   initCompany: CompanyItemShow;
@@ -68,6 +69,15 @@ export default function DetailPage({
   }, [category]);
 
   useEffect(() => {
+    const move = useIntersectionObserver({
+      target: ["move-top", "move-bottom", "move-left", "drop"],
+      insert: "perform",
+      threshold: 0,
+    });
+    return () => move.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (categories.data) {
       setCategory({
         industry: Relist(categories.data.industry),
@@ -83,17 +93,17 @@ export default function DetailPage({
   }, [categories.data]);
 
   return (
-    <div className="flex flex-col w-full sm:gap-5 sm:px-5 gap-2">
+    <div className="flex flex-col w-full sm:gap-5 sm:px-5 gap-2 sm:pt-5">
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
         <div className="relative flex-8 lg:h-screen flex flex-col bg-white sm:rounded-2xl sm:gap-5 gap-2 overflow-hidden">
           <Image
             src={BG4}
             alt="Company Background.svg"
-            className="w-full lg:h-1/4 h-50 object-cover"
+            className="w-full lg:h-1/4 h-50 object-cover drop"
             loading="eager"
           />
-          <div className="absolute right-0 top-0 p-5 sm:hidden">
+          <div className="absolute right-0 top-0 p-5 sm:hidden move-bottom">
             <a
               href={initCompany.website_url}
               target="_blank"
@@ -105,7 +115,7 @@ export default function DetailPage({
           </div>
           <div className="w-full p-5 flex max-sm:flex-col items-stretch justify-between gap-5">
             <div className="flex items-stretch gap-5">
-              <div className="relative sm:w-40 w-30 h-full shrink-0">
+              <div className="relative sm:w-40 w-30 h-full shrink-0 move-left">
                 <div className="absolute sm:w-40 w-30 sm:h-40 h-30 sm:-bottom-1/2 bottom-0 rounded-xl border-2 border-blue-default overflow-hidden shadow-default">
                   <CldImage
                     src={initCompany.logo_url}
@@ -117,24 +127,26 @@ export default function DetailPage({
                   />
                 </div>
               </div>
-              <p className="sm:text-4xl text-3xl font-bold line-clamp-2">
+              <p className="sm:text-4xl text-3xl font-bold line-clamp-2 move-left">
                 {initCompany.name}
               </p>
             </div>
-            <a
-              href={initCompany.website_url}
-              target="_blank"
-              className="max-sm:hidden self-start flex items-center gap-2 px-2 rounded-lg border-2 text-blue-default border-blue-default cursor-pointer duration-200 ease-in hover:text-white hover:bg-blue-default hover:shadow-default active:bg-blue-default active:text-white active:shadow-default active:scale-95"
-            >
-              <p>Website công ty</p>
-              <SquareArrowOutUpRight className="w-5 h-5" />
-            </a>
+            <div className="move-left">
+              <a
+                href={initCompany.website_url}
+                target="_blank"
+                className="max-sm:hidden self-start flex items-center gap-2 px-2 rounded-lg border-2 text-blue-default border-blue-default cursor-pointer duration-200 ease-in hover:text-white hover:bg-blue-default hover:shadow-default active:bg-blue-default active:text-white active:shadow-default active:scale-95"
+              >
+                <p>Website công ty</p>
+                <SquareArrowOutUpRight className="w-5 h-5" />
+              </a>
+            </div>
           </div>
           <div className="flex-1 flex max-lg:flex-col max-lg:gap-5 min-h-0">
-            <Desciption className="flex-1" desc={initCompany.description} />
-            <div className="lg:h-full h-0.5 lg:w-0.5 w-full bg-dark-blue"/>
+            <Desciption className="flex-1 move-top" desc={initCompany.description} />
+            <div className="lg:h-full h-0.5 lg:w-0.5 w-full bg-dark-blue move-top" />
             <JobsOfCompany
-              className="flex-2"
+              className="flex-2 move-top"
               lang={lang}
               jobs={initJobsCompany}
               categoriesMap={categoriesMap}

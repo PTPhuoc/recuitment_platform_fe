@@ -15,6 +15,8 @@ import CompanySearch from "@/app/Component/Input/CompanySearch";
 import CCDefault from "@/app/Component/CompanyCard/CCDefault";
 import { PackageOpen } from "lucide-react";
 import axios from "axios";
+import useIntersectionObserver from "@/app/hook/useIntersectionObserver";
+import ChangeNumberPage from "@/app/Component/ChangeNumberPage";
 
 type PageProps = {
   name: string;
@@ -127,6 +129,15 @@ export default function CompaniesPage({
   };
 
   useEffect(() => {
+    const move = useIntersectionObserver({
+      target: ["move-top", "move-bottom", "drop"],
+      insert: "perform",
+      threshold: 0,
+    });
+    return () => move.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (categories.data) {
       setCategory({
         industry: Relist(categories.data.industry),
@@ -152,18 +163,18 @@ export default function CompaniesPage({
           loading="eager"
         />
         <div className="z-2 flex flex-col py-1 rounded-full items-center">
-          <p className="text-7xl max-sm:text-6xl font-bold text-white text-center">
+          <p className="text-7xl max-sm:text-6xl font-bold text-white text-center move-bottom">
             Companies
           </p>
-          <p className="text-2xl font-bold text-zinc-200 text-center max-sm:hidden">
+          <p className="text-2xl font-bold text-zinc-200 text-center max-sm:hidden move-bottom">
             Explore companies and discover where your next opportunity begins.
           </p>
-          <p className="text-2xl font-bold text-zinc-200 text-center sm:hidden">
+          <p className="text-2xl font-bold text-zinc-200 text-center sm:hidden move-bottom">
             Discover companies. Find your opportunity.
           </p>
         </div>
         <CompanySearch
-          className="z-2 sm:w-3/4 w-[90%]"
+          className="z-2 sm:w-3/4 w-[90%] move-bottom"
           value={search}
           categories={{
             industry: category.industry,
@@ -171,31 +182,42 @@ export default function CompaniesPage({
           }}
           outValue={(value) => setSearch({ ...search, ...value })}
         />
-        <ButtonDefault
-          label="Tìm kiếm"
-          className="w-30 h-15 shadow-default"
-          classLoad="w-30 h-15 shadow-default"
-          classDisabled="w-30 h-15"
-          funsHandle={async () => await handleSearch({ ...search })}
-        />
+        <div className="move-bottom">
+          <ButtonDefault
+            label="Tìm kiếm"
+            className="w-30 h-15 shadow-default"
+            classLoad="w-30 h-15 shadow-default"
+            classDisabled="w-30 h-15 move-bottom"
+            funsHandle={async () => await handleSearch({ ...search })}
+          />
+        </div>
       </div>
       <div className="flex w-full items-stretch">
         <div className="flex-1 max-lg:hidden"></div>
         {companies.length > 0 ? (
-          <div className=" flex-8 grid lg:grid-cols-2 grid-cols-1 grid-rows-5 gap-5 sm:p-5 p-2 h-screen min-h-200 items-start bg-white border-2 border-dashed lg:rounded-2xl shadow-default">
-            {companies.map((item) => (
-              <CCDefault
-                company={item}
-                categoriesMap={categoriesMap}
-                locaMap={locaMap}
-                onNavigate={(id) => {
-                  dispatch(setLoad(true));
-                  router.push(`/companies/${id}/detail`);
-                }}
-                onCategories={(category) => handleSearch({ ...category })}
-                key={item.id}
-              />
-            ))}
+          <div className="flex-8 flex flex-col ms:gap-5 gap-2 sm:p-5 p-2 min-h-200 bg-white border-2 border-dashed lg:rounded-2xl shadow-default move-top">
+            <div className=" flex-1 grid lg:grid-cols-2 grid-cols-1 grid-rows-5 gap-5 items-start">
+              {companies.map((item) => (
+                <CCDefault
+                  company={item}
+                  categoriesMap={categoriesMap}
+                  locaMap={locaMap}
+                  onNavigate={(id) => {
+                    dispatch(setLoad(true));
+                    router.push(`/companies/${id}/detail`);
+                  }}
+                  onCategories={(category) => handleSearch({ ...category })}
+                  key={item.id}
+                />
+              ))}
+            </div>
+            <ChangeNumberPage
+              next={paginate.next}
+              previous={paginate.previous}
+              pageNumber={paginate.page}
+              onNextPage={handleChangePage}
+              onPreviousPage={handleChangePage}
+            />
           </div>
         ) : (
           <div className="flex flex-8 flex-col items-center justify-center h-screen min-h-200 bg-white border-2 border-dashed sm:rounded-2xl shadow-default">

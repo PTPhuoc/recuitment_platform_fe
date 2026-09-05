@@ -17,6 +17,7 @@ import Requires from "./Requires";
 import Trapezium from "@/app/svgs/Trapezium.svg";
 import { CldImage } from "next-cloudinary";
 import CCSummary from "@/app/Component/CompanyCard/CCSummary";
+import useIntersectionObserver from "@/app/hook/useIntersectionObserver";
 
 type PageProps = {
   job: JobItemShow;
@@ -51,6 +52,15 @@ export default function DetailPage({ job }: PageProps) {
   }, [category]);
 
   useEffect(() => {
+    const move = useIntersectionObserver({
+      target: ["move-top", "move-bottom", "drop"],
+      insert: "perform",
+      threshold: 0,
+    });
+    return () => move.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (categories.data) {
       setCategory({
         industry: Relist(categories.data.industry),
@@ -67,13 +77,13 @@ export default function DetailPage({ job }: PageProps) {
   }, [categories.data]);
 
   return (
-    <div className="w-full sm:px-5 flex flex-col sm:gap-5 gap-2">
+    <div className="w-full sm:px-5 flex flex-col sm:gap-5 gap-2 sm:pt-5">
       <div className="w-full flex items-stretch">
         <div className="flex-1 max-sm:hidden"></div>
         <div className="flex-8 flex sm:gap-5 gap-2 max-lg:flex-col">
           <div className="flex-6 flex flex-col sm:gap-5 gap-2">
-            <Overview job={job} lang={lang} categoriesMap={categoriesMap} />
-            <div className="flex flex-col gap-3 p-5 bg-white sm:rounded-2xl">
+            <Overview job={job} lang={lang} categoriesMap={categoriesMap} className="move-top"/>
+            <div className="flex flex-col gap-3 p-5 bg-white sm:rounded-2xl move-top">
               <div className="flex flex-wrap items-center sm:gap-5 gap-3">
                 <p className="font-bold">Lĩnh vực</p>
                 {job.require.industries.length > 0 &&
@@ -92,7 +102,7 @@ export default function DetailPage({ job }: PageProps) {
               </div>
             </div>
           </div>
-          <div className="relative flex-2 flex lg:flex-col gap-10 max-lg:p-5 lg:items-center lg:justify-center justify-between bg-blue-default sm:rounded-2xl shadow-default overflow-hidden">
+          <div className="relative flex-2 flex lg:flex-col gap-10 max-lg:p-5 lg:items-center lg:justify-center justify-between bg-blue-default sm:rounded-2xl shadow-default overflow-hidden move-top">
             <Image
               src={SVGBackgound1}
               alt="ButtonBG1"
@@ -115,16 +125,16 @@ export default function DetailPage({ job }: PageProps) {
       <div className="flex min-h-150 items-stretch">
         <div className="flex-1 max-sm:hidden"></div>
         <div className="flex-8 flex items-stretch sm:gap-5 gap-2 max-lg:flex-col-reverse">
-          <div className="flex-6 flex bg-white sm:rounded-2xl">
+          <div className="flex-6 flex bg-white sm:rounded-2xl move-top">
             <div className="flex-1 flex-col p-5">
-              <Descriptions job={job} />
+              <Descriptions job={job}/>
             </div>
           </div>
           <div className="flex-2 flex flex-col gap-5">
             <div className="sticky top-5 flex flex-col gap-5">
-              <Requires job={job} categoriesMap={categoriesMap} />
+              <Requires job={job} categoriesMap={categoriesMap} className="move-top"/>
               <CCSummary
-                className="max-lg:hidden"
+                className="max-lg:hidden move-top"
                 company={job.company}
                 company_detail={job.company_detail}
                 onNavigate={(id) => {
@@ -153,7 +163,7 @@ export default function DetailPage({ job }: PageProps) {
       </div>
       <div className="flex items-stretch">
         <div className="flex-1 max-sm:hidden"></div>
-        <div className="relative flex-8 flex lg:items-center gap-5 max-lg:flex-col p-5 sm:rounded-2xl overflow-hidden">
+        <div className="relative flex-8 flex lg:items-center gap-5 max-lg:flex-col p-5 sm:rounded-2xl overflow-hidden move-top">
           <div className="absolute top-0 right-0 w-full h-full">
             <Image
               src={Trapezium}
